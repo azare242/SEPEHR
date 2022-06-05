@@ -2,7 +2,6 @@ import threading
 from threading import *
 import socket
 from Server.Logic.Server import Server
-from Server.Model.User import User
 
 
 class ClientHandler:
@@ -12,8 +11,6 @@ class ClientHandler:
         self.thread = threading.Thread(target=self.handling, args=(socket,))
         self.server = server
 
-    def generate_user(self, info):
-        return User(info[0], info[1], info[2], info[3], info[4])
 
     def handling(self):
         try:

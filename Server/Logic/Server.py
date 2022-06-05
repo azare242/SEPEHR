@@ -1,5 +1,7 @@
 import socket
 import _thread
+
+from Server.Model.User import User
 from Utils import Properties
 from Server.Model import Sets
 from Server.Logic.ClientHandler import ClientHandler
@@ -17,6 +19,8 @@ class Server:
         self.socket.listen()
 
 
+    def generate_user(self, info):
+        return User(info[0], info[1], info[2], info[3], info[4])
 
     def login(self, client: socket.socket):
         client.send('login'.encode('utf-8'))
