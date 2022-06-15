@@ -119,7 +119,7 @@ CREATE TABLE `sepehr`.`sender_reciver_messages` (
     ON UPDATE SET NULL,
   CONSTRAINT SR_MESSAGE_ID
     FOREIGN KEY (MESSAGE_ID)
-    REFERENCES messages(`ID)
+    REFERENCES messages(ID)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
