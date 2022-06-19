@@ -4,8 +4,6 @@ from Server.Model.User import User
 from Server.Logic.Parser import *
 
 
-def generate_user(info):
-    return User(info[0], info[1], info[2], info[3], info[4])
 
 
 class ClientHandler:
@@ -15,16 +13,19 @@ class ClientHandler:
         self.thread = threading.Thread(target=self.handling, args=())
 
     def handling(self):
-        try:
-            data_received = self.client_socket.recv(4096).decode('utf-8')
-            parse(data_received)
+        while True:
+            try:
+                data_received = self.client_socket.recv(4096).decode('utf-8')
+                parse(data_received)
 
-        except socket.error as err:
-            print("USER EXITED")
-            self.client_socket.close()
-        finally:
-            print("USER EXITED")
-            self.client_socket.close()
+            except socket.error as err:
+                print("USER EXITED")
+                self.client_socket.close()
+                break
+            finally:
+                print("USER EXITED")
+                self.client_socket.close()
+                break
 
     def start(self):
         self.thread.start()
