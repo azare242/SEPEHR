@@ -1,8 +1,7 @@
 import threading
-from threading import *
 import socket
-from Server.Logic.Server import Server
 from Server.Model.User import User
+from Server.Logic.Parser import *
 
 
 def generate_user(info):
@@ -10,31 +9,22 @@ def generate_user(info):
 
 
 class ClientHandler:
-    def __init__(self, client_socket: socket.socket, server: Server):
+    def __init__(self, client_socket: socket.socket):
         self.user = None
         self.client_socket = client_socket
-        self.thread = threading.Thread(target=self.handling, args=(socket,))
-        self.server = server
+        self.thread = threading.Thread(target=self.handling, args=())
 
     def handling(self):
         try:
-            self.client_socket.send('login'.encode('utf-8'))
-            while True:
-                user_information = self.client_socket.recv(4096).decode('utf-8')
-                info = user_information.split('//')
-                if self.server.client_handlers.search_by_username(info[0]) is None:
-                    self.user = generate_user(info)
-                    self.client_socket.send('done'.encode('utf-8'))
-                    break
-                else:
-                    self.client_socket.send('try-again'.encode('utf-8'))
+            data_received = self.client_socket.recv(4096).decode('utf-8')
+            parse(data_received)
 
-        except socket.error as err :
+        except socket.error as err:
+            print("USER EXITED")
             self.client_socket.close()
-            self.server.client_handlers.remove_client(self)
         finally:
+            print("USER EXITED")
             self.client_socket.close()
-            self.server.client_handlers.remove_client(self)
 
     def start(self):
         self.thread.start()

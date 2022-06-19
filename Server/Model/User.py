@@ -1,4 +1,5 @@
-from Sets import *
+from Server.Model.Sets import FriendsSet
+
 
 class User:
     def __init__(self, username, fname, lname, phone, email):
@@ -7,5 +8,4 @@ class User:
         self.lname = lname
         self.phone = phone
         self.email = email
-        self.friends = FriendsSet() # TODO : INITIAL FRIENDS WITH DATABASE
-
+        self.friends = FriendsSet()  # TODO : INITIAL FRIENDS WITH DATABASE
