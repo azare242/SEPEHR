@@ -14,10 +14,15 @@ class DatabaseConnection:
                                                   password=self.PASSWORD)
         print("CONNECTED TO DATABASE")
 
-    def execute_query(self, query: str):
+    def execute_query(self, query: str, mode = 0):
         cursor = self.connection.cursor()
         cursor.execute(query)
-        response = cursor.fetchall()
+        response = None
+        if mode == 0:
+            response = cursor.fetchall()
+        else:
+            response = 'Done'
+            cursor.commit()
         cursor.close()
         return response
 
