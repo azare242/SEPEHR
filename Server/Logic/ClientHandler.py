@@ -4,8 +4,6 @@ from Server.Model.User import User
 from Server.Logic.Parser import *
 
 
-
-
 class ClientHandler:
     def __init__(self, client_socket: socket.socket):
         self.user = None

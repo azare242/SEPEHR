@@ -1,17 +1,16 @@
 import socket
 
-
 from Utils.Properties import *
 
 from Server.Logic.ClientHandler import ClientHandler
+from Server.Logic.DatabaseConnection import *
 
 
 class Server:
     def __init__(self):
-
         self.HOST = get('Server', "HOST")
         self.PORT = int(get('Server', "PORT"))
-
+        self.database_connection = DatabaseConnection()
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.bind((self.HOST, self.PORT))
         self.socket.listen(5)

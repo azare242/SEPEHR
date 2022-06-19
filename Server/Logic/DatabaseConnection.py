@@ -12,6 +12,7 @@ class DatabaseConnection:
                                                   database=self.DATABASE,
                                                   user=self.USER,
                                                   password=self.PASSWORD)
+        print("CONNECTED TO DATABASE")
 
     def execute_query(self, query: str):
         cursor = self.connection.cursor()
