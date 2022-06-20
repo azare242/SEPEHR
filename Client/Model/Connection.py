@@ -27,8 +27,10 @@ class Connection:
     def connect(self):
         self.socket.connect((self.HOST, self.PORT))
 
-    def close(self):
+    def close(self,mode=0):
         self.socket.close()
+        if mode == 1:
+            sys.exit()
 
     def send_login_data(self, data: str):
         try:

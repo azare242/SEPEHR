@@ -25,10 +25,11 @@ class App:
             data = f'login//{un}//{pw}'
             self.connection.send_login_data(data)
             response = self.connection.receive()
-            if response == 1:
+            if response == "DONE":
                 # TODO : USER MENU
                 break
             else:
+                self.connection.close()
                 print('username or password is wrong try again')
 
     def login_m(self):
