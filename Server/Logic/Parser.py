@@ -1,9 +1,22 @@
 from Server.Logic.DatabaseConnection import *
+import datetime
 
 
 class Parser:
     def __init__(self, database_connection: DatabaseConnection):
         self.dbc = database_connection
+
+    def log(self, info):
+        time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        type = info[1]
+        status = info[0]
+
+        if type == 'LOGIN' and status == 'DONE':
+            text = f'{info[2]} logged in successfully'
+            self.dbc.execute_query(f"""
+            INSERT INTO sepehr.logs (TYPE, TEXT, TIME)
+            VALUE ({type}, {text}, {time})
+        """)
 
     def login(self, username, password):
         check1 = self.dbc.execute_query(f"""
@@ -24,9 +37,9 @@ class Parser:
     def parse(self, data_received: str, clients: set):
         info = data_received.split('//')
         if info[0] == 'login':
-            result = [self.login(data_received[1], data_received[2]) , 'LOGIN']
+            result = [self.login(info[1], info[2]), 'LOGIN', info[1]]
             if result[0] != 'ERROR':
-                clients.add(data_received[1])
+                clients.add(info[1])
         elif info[0] == 'signup':
             pass
             # TODO : SIGNUP
