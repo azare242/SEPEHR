@@ -7,15 +7,15 @@ class Parser:
         self.dbc = database_connection
 
     def log(self, info):
-        time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        type = info[1]
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        log_type = info[1]
         status = info[0]
 
         if type == 'LOGIN' and status == 'DONE':
             text = f'{info[2]} logged in successfully'
             self.dbc.execute_query(f"""
             INSERT INTO sepehr.logs (TYPE, TEXT, TIME)
-            VALUE ({type}, {text}, {time})
+            VALUE ({log_type}, {text}, {time})
         """)
 
     def login(self, username, password):
