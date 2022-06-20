@@ -14,16 +14,23 @@ class DatabaseConnection:
                                                   password=self.PASSWORD)
         print("CONNECTED TO DATABASE")
 
-    def execute_query(self, query: str, mode = 0):
-        cursor = self.connection.cursor()
-        cursor.execute(query)
-        response = None
-        if mode == 0:
-            response = cursor.fetchall()
-        else:
-            response = 'Done'
-            cursor.commit()
-        cursor.close()
+    def execute_query(self, query: str, mode=0):
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(query)
+            response = None
+            if mode == 0:
+                response = cursor.fetchall()
+            else:
+                response = 'Done'
+                cursor.commit()
+        except mysql.connector.Error as err:
+            print(err)
+            response = 'ERROR'
+        finally:
+            if cursor is not None:
+                cursor.close()
         return response
 
     def close_connection(self):
