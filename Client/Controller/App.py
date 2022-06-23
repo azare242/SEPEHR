@@ -38,6 +38,11 @@ class App:
             else:
                 print('Try Again')
 
+    def create_sq(self):
+        q = input('Security Question: ')
+        a = input('Answer: ')
+        return q, a
+
     def signup_a(self):
         print('Notice: if you want to back enter "<back>"')
         while True:
@@ -64,7 +69,9 @@ class App:
             self.connection.send(data)
             response = self.connection.receive()
             if response == 'DONE':
-                # TODO : CREATE SECURITY QUESTION
+                q, a = self.create_sq()
+                data = f'create-security-question//{un}//{q}//{a}'
+                self.connection.send(data)
                 print('done')
                 self.exit_from_server()
                 # TODO : USERMENU

@@ -38,18 +38,25 @@ class Parser:
         check = self.dbc.execute_query(f"""
         SELECT count(*)
         FROM sepehr.users
-        WHERE sepehr.users.ID = {username} OR sepehr.users.PHONE_NUMBER = {phone_number} OR sepehr.users.EMAIL = {email}
+        WHERE sepehr.users.ID = '{username}' OR sepehr.users.PHONE_NUMBER = '{phone_number}' OR sepehr.users.EMAIL = '{email}'
         """)
         return check[0][0] == 0
     def signup(self,data):
         if self.new_user_check(data[0], data[4], data[5]):
             self.dbc.execute_query(f"""
             INSERT INTO sepehr.users(ID, FNAME, LNAME, PHONE_NUMBER, EMAIL) VALUE 
-            ({data[0]},{data[2]},{data[3]},{data[4]},{data[5]})
+            ('{data[0]}','{data[2]}','{data[3]}','{data[4]}','{data[5]}')
             """, mode=1)
             return 'DONE'
         else:
             return 'ERROR'
+
+    def create_security_question(self,data):
+        self.dbc.execute_query(f"""
+        INSERT INTO sepehr.security_questions(USER_ID, Question, Answer) 
+        VALUE ('{data[1]}', '{data[2]}', '{data[3]}')
+        """, mode=1)
+
 
     def parse(self, data_received: str, clients: set):
         info = data_received.split('//')
@@ -64,6 +71,8 @@ class Parser:
         elif info[0] == 'signup':
             result = self.signup(data_received[1:])
             return result
+        elif info[0] == 'create-security-question':
+            self.create_security_question(data_received[1:])
         elif info[0] == 'send-message':
             pass
             # TODO : SEND-MESSAGE
