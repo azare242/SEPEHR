@@ -101,13 +101,11 @@ class App:
             pw = input('Password : ')
             if pw == '<back>':
                 return
-            print(encrypt(pw))
             self.connection.connect()
             data = f'login//{un}//{encrypt(pw)}'
             self.connection.send_login_data(data)
             response = self.connection.receive()
             if response == "DONE":
-                print('done')
                 UserApplication(un, self.connection).main_loop()
                 return
             else:

@@ -7,7 +7,7 @@ def get_friends_list(username, connection: Connection):
     data = f'friends//{username}'
     connection.send(data)
     response = connection.receive()
-    if len(response) == 0:
+    if response == 'EMPTY':
         return l_res
 
     l_res = response.split('//')

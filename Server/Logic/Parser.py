@@ -92,8 +92,9 @@ class Parser:
         SELECT sepehr.friends.USER_ID2 FROM sepehr.friends
         WHERE sepehr.friends.USER_ID1 = '{username}'
         """)
+        print(friends)
         if len(friends) == 0:
-            return ""
+            return "EMPTY"
         return self.create_string(friends)
 
     def send_message(self, data):
