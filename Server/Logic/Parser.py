@@ -39,8 +39,11 @@ class Parser:
         if info[0] == 'login':
             result = [self.login(info[1], info[2]), 'LOGIN', info[1]]
             if result[0] != 'ERROR':
-                clients.add(info[1])
-                return 'DONE'
+                if not clients.__contains__(info[1]):
+                    clients.add(info[1])
+                    return 'DONE'
+                else:
+                    return 'ERROR'
         elif info[0] == 'signup':
             pass
             # TODO : SIGNUP
