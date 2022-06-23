@@ -99,6 +99,25 @@ class Parser:
             return ""
         return self.create_string(friends)
 
+    def send_message(self, data):
+        _time_ = _time_ = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        message_id = f'{data[1]}X{data[2]}X{_time_}'
+        print(message_id)
+        q1 = f"""
+        INSERT INTO sepehr.messages(ID, TEXT, TIME) VALUE 
+        ('{message_id}', '{data[0]}','{_time_}')
+        """
+        q2 = f"""
+        INSERT INTO sepehr.sender_reciver_messages(MESSAGE_ID, USER_ID_RECIVER, USER_ID_SENDER) VALUE 
+        ('{message_id}', '{data[1]}', '{data[2]}')
+        """
+        self.dbc.execute_query(q1, mode=1)
+        self.dbc.execute_query(q2, mode=1)
+        logtxt = f"""
+        send message from {data[1]} ro {data[2]} successfully
+        """
+
+
     def parse(self, data_received: str, clients: set):
 
         info = data_received.split('//')
@@ -130,8 +149,7 @@ class Parser:
             clients.remove(info[1])
             return "DONE"
         elif info[0] == 'send-message':
-            pass
-            # TODO : SEND-MESSAGE
+            self.send_message(info[1:])
 
         elif info[0] == 'friend-request':
             pass

@@ -10,6 +10,7 @@ def get_friends_list(username, connection: Connection):
     if len(response) == 0:
         return l_res
 
+    l_res = response.split('//')
     return l_res
 
 
@@ -19,6 +20,10 @@ class UserApplication:
         self.friends = get_friends_list(username, connection)
         self.connection = connection
 
+    def print_friends_list(self):
+        i = 1
+        for x in self.friends:
+            print(f'{i} - {x}')
     def check(self, choice: str, corrects: list):
         for c in corrects:
             if choice == c:
@@ -35,8 +40,39 @@ class UserApplication:
                     response = self.connection.receive()
                     self.connection.close()
                     return
-                if c == '3':
+                elif c == '1':
+                    self.send_message()
+                elif c == '3':
                     self.search()
+
+    def check_message_friend(self, username: str):
+        for x in self.friends:
+            if username.__eq__(x):
+                return True
+        return False
+
+    def check_message(self, data: str):
+        data2 = data.split('->')
+        return self.check_message_friend(data2[1])
+
+    def send_message(self):
+        if len(self.friends) == 0:
+            print('Add some friends')
+            return
+        self.print_friends_list()
+        m = input('Enter Like : message/friend username or <back> for back')
+        if m =='<back>':
+            return
+        ms = m.split('->')
+        print(ms)
+        if not self.check_message(m):
+            print('invlaid')
+            return
+        data = f'send-message//{ms[0]}//{self.username}//{ms[1]}'
+        self.connection.send(data)
+
+
+
 
 
     def print_search_result(self, result: str):
