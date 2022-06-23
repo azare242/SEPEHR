@@ -24,12 +24,33 @@ class UserApplication:
         i = 1
         for x in self.friends:
             print(f'{i} - {x}')
+
     def check(self, choice: str, corrects: list):
         for c in corrects:
             if choice == c:
                 return True
         return False
 
+    def check_c(self, c):
+        l = [str(x) for x in range(0, len(self.friends))]
+        for x in l:
+            if c == x:
+                return True
+        return False
+
+    def read_messages(self):
+        if len(self.friends) == 0:
+            print('Add some friends')
+            return
+        self.print_friends_list()
+        c = input('choose <back> for back')
+        if self.check_c(c):
+            print('invalid')
+            return
+        data = f'get-messages//{self.username}//{self.friends[int(c) - 1]}'
+        self.connection.send(data)
+        response = self.connection.receive()
+        # SHOW_MESSAGES
     def main_loop(self):
         while True:
             print(get_user_menu(m_count=0, p_count=0))
@@ -42,6 +63,9 @@ class UserApplication:
                     return
                 elif c == '1':
                     self.send_message()
+                elif c == '2':
+                    pass
+                    # TODO : READ MESSAGES
                 elif c == '3':
                     self.search()
 
@@ -61,19 +85,15 @@ class UserApplication:
             return
         self.print_friends_list()
         m = input('Enter Like : message/friend username or <back> for back')
-        if m =='<back>':
+        if m == '<back>':
             return
         ms = m.split('->')
         print(ms)
         if not self.check_message(m):
-            print('invlaid')
+            print('invalid')
             return
         data = f'send-message//{ms[0]}//{self.username}//{ms[1]}'
         self.connection.send(data)
-
-
-
-
 
     def print_search_result(self, result: str):
         if result == 'NOTHING':

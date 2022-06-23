@@ -74,7 +74,6 @@ class Parser:
             temp.append(x[0])
         return '//'.join(temp)
 
-
     def search(self, data):
         s_res = self.dbc.execute_query(f"""
         SELECT sepehr.users.ID from sepehr.users
@@ -85,9 +84,7 @@ class Parser:
             return 'NOTHING'
         return self.create_string(s_res)
 
-
-
-    def get_friends_list(self,username):
+    def get_friends_list(self, username):
         friends = self.dbc.execute_query(f"""
         SELECT sepehr.friends.USER_ID1 FROM sepehr.friends
         WHERE sepehr.friends.USER_ID2 = '{username}'
@@ -116,6 +113,21 @@ class Parser:
         logtxt = f"""
         send message from {data[1]} ro {data[2]} successfully
         """
+
+    def get_messages(self, data):
+        q1 = f"""
+        SELECT TEXT,USER_ID_SENDER,USER_ID_RECIVER
+        FROM sepehr.messages AS M , sepehr.sender_reciver_messages AS SRM
+        WHERE M.ID = SRM.MESSAGE_ID 
+        AND USER_ID_SENDER = '{data[0]}' AND USER_ID_RECIVER = '{data[1]}'
+        UNION 
+        SELECT TEXT,USER_ID_SENDER,USER_ID_RECIVER
+        FROM sepehr.messages AS M , sepehr.sender_reciver_messages AS SRM
+        WHERE M.ID = SRM.MESSAGE_ID 
+        AND USER_ID_SENDER = '{data[1]}' AND USER_ID_RECIVER = '{data[0]}'
+        """
+        messages = self.dbc.execute_query(q1)
+        # TODO : CREATE MESSAGES STRING
 
 
     def parse(self, data_received: str, clients: set):
@@ -150,7 +162,9 @@ class Parser:
             return "DONE"
         elif info[0] == 'send-message':
             self.send_message(info[1:])
-
+        elif info[0] == 'get-messages':
+            pass
+            # TODO : GET MESSAGES
         elif info[0] == 'friend-request':
             pass
             # TODO : FRIEND-REQUEST
