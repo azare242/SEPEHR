@@ -6,17 +6,12 @@ class Parser:
     def __init__(self, database_connection: DatabaseConnection):
         self.dbc = database_connection
 
-    def log(self, info):
-        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        log_type = info[1]
-        status = info[0]
-
-        if type == 'LOGIN' and status == 'DONE':
-            text = f'{info[2]} logged in successfully'
-            self.dbc.execute_query(f"""
-            INSERT INTO sepehr.logs (TYPE, TEXT, TIME)
-            VALUE ({log_type}, {text}, {time})
-        """)
+    def log(self, type, text):
+        _time_ = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        self.dbc.execute_query(f"""
+        INSERT INTO sepehr.logs(TYPE, TEXT, TIME) VALUE 
+        ('{type}', '{text}', '{_time_}')
+        """, mode=1)
 
     def login(self, username, password):
         check1 = self.dbc.execute_query(f"""
@@ -32,6 +27,8 @@ class Parser:
         if len(check1) == 1 and check2[0][0] == 1:
             return "DONE"
         else:
+            logtxt = f"""Login field by USER {username}"""
+            self.log('ERR', logtxt)
             return "ERROR"
 
     def new_user_check(self, username, phone_number, email):
@@ -52,8 +49,17 @@ class Parser:
             INSERT INTO sepehr.passwords(USER_ID, Encrypted_Password) VALUE 
             ('{data[0]}','{data[1]}')
             """)
+            logtxt = f"""USERNAME = {data[0]}
+            FNAME = {data[2]}
+            LNAME = {data[3]}
+            PHONE NUMBER = {data[4]}
+            EMAIL = {data[5]}
+            Signed Up Successfully"""
+            self.log('INFO', logtxt)
             return 'DONE'
         else:
+            logtxt = 'Sign Up Field'
+            self.log('ERR', logtxt)
             return 'ERROR'
 
     def create_security_question(self, data):
@@ -85,8 +91,12 @@ class Parser:
             if result != 'ERROR':
                 if not clients.__contains__(info[1]):
                     clients.add(info[1])
+                    logtxt = f"""USER {info[1]} logged in succsessfully"""
+                    self.log('INFO', logtxt)
                     return 'DONE'
                 else:
+                    logtxt = f"""USER {info[1]} want logged in twice at same time"""
+                    self.log('ERR', logtxt)
                     return 'ERROR'
         elif info[0] == 'signup':
             result = self.signup(info[1:])
