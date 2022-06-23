@@ -24,7 +24,7 @@ class DatabaseConnection:
                 response = cursor.fetchall()
             else:
                 response = 'Done'
-                cursor.commit()
+                self.connection.commit()
         except mysql.connector.Error as err:
             print(err)
             response = 'ERROR'

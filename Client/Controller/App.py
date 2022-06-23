@@ -46,7 +46,7 @@ class App:
     def signup_a(self):
         print('Notice: if you want to back enter "<back>"')
         while True:
-            un = input('Username : ').lower()
+            un = input('Username : ')
             if un == '<back>':
                 return
             fname = input('First name: ')
@@ -65,7 +65,7 @@ class App:
             if decrypt(pw) == '<back>':
                 return
             self.connection.connect()
-            data = f'sign-up//{un}//{pw}//{fname}//{lname}//{phone_number}//{e}'
+            data = f'signup//{un}//{pw}//{fname}//{lname}//{phone_number}//{e}'
             self.connection.send(data)
             response = self.connection.receive()
             if response == 'DONE':
@@ -87,7 +87,7 @@ class App:
                 if choice == 'x' or choice == 'X':
                     return
                 else:
-                    self.login_a()
+                    self.signup_a()
                     return
 
 
@@ -139,7 +139,6 @@ class App:
                 self.login_m()
                 # TODO : LOGIN
             elif cmd_in == '2':
-                print(Menu['signup-m'])
-                # TODO : SIGNUP
+                self.signup_m()
             else:
                 print('invalid input try again: ', end='')

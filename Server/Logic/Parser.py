@@ -41,6 +41,7 @@ class Parser:
         WHERE sepehr.users.ID = '{username}' OR sepehr.users.PHONE_NUMBER = '{phone_number}' OR sepehr.users.EMAIL = '{email}'
         """)
         return check[0][0] == 0
+
     def signup(self,data):
         if self.new_user_check(data[0], data[4], data[5]):
             self.dbc.execute_query(f"""
@@ -69,10 +70,11 @@ class Parser:
                 else:
                     return 'ERROR'
         elif info[0] == 'signup':
-            result = self.signup(data_received[1:])
+            result = self.signup(info[1:])
             return result
+
         elif info[0] == 'create-security-question':
-            self.create_security_question(data_received[1:])
+            self.create_security_question(info[1:])
         elif info[0] == 'send-message':
             pass
             # TODO : SEND-MESSAGE
