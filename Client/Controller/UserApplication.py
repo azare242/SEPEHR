@@ -10,8 +10,6 @@ def get_friends_list(username, connection: Connection):
     if len(response) == 0:
         return l_res
 
-
-
     return l_res
 
 
@@ -37,6 +35,18 @@ class UserApplication:
                     response = self.connection.receive()
                     self.connection.close()
                     return
+                if c == '3':
+                    self.search()
+
+
+    def print_search_result(self, result: str):
+        if result == 'NOTHING':
+            print('Nothing...')
+        print('search result')
+        data = result.split('//')
+        i = 1
+        for x in data:
+            print(f'{i} - {x}')
 
     def search(self):
         elements = ['ID', 'FNAME', 'LNAME', 'PHONE_NUMBER', 'EMAIL']
@@ -44,10 +54,13 @@ class UserApplication:
             print(Menu['search'])
             e = input()
             if self.check(e, ['1', '2', '3', '4', '5', 'x', 'X']):
+                if e == 'x' or e == 'X':
+                    return
                 s = input('Enter here for search(<back> for back):  ')
                 if s == '<exit>':
                     return
                 data = f'search//{elements[int(e) - 1]}//{s}'
                 self.connection.send(data)
                 response = self.connection.receive()
+                self.print_search_result(response)
                 return

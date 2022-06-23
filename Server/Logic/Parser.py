@@ -68,17 +68,24 @@ class Parser:
         VALUE ('{data[0]}', '{data[1]}', '{data[2]}')
         """, mode=1)
 
-    def search(self, data):
-        return self.dbc.execute_query(f"""
-        SELECT sepehr.users.ID from sepehr.users
-        WHERE sepehr.users.{data[0]} = '%{data[1]}%'
-        """)
-
     def create_string(self, data):
         temp = []
         for x in data:
             temp.append(x[0])
         return '//'.join(temp)
+
+
+    def search(self, data):
+        s_res = self.dbc.execute_query(f"""
+        SELECT sepehr.users.ID from sepehr.users
+        WHERE sepehr.users.{data[0]} LIKE '%{data[1]}%'
+        """)
+        print('1')
+        if len(s_res) == 0:
+            return 'NOTHING'
+        return self.create_string(s_res)
+
+
 
     def get_friends_list(self,username):
         friends = self.dbc.execute_query(f"""
