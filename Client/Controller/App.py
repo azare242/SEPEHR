@@ -64,10 +64,12 @@ class App:
             self.connection.send(data)
             response = self.connection.receive()
             if response == 'DONE':
-                pass
                 print('done')
                 self.exit_from_server()
                 # TODO : USERMENU
+            else:
+                print("username exists or something went wrong try again")
+                return
 
     def signup_m(self):
         print(Menu['signup-m'])
@@ -77,6 +79,9 @@ class App:
                 if choice == 'x' or choice == 'X':
                     return
                 else:
+                    self.login_a()
+                    return
+
 
     def login_a(self):
         print('Notice: if you want to back enter "<back>"')
@@ -106,6 +111,7 @@ class App:
             if self.check(choice, ['1', '2', 'x', 'X']):
                 if choice == '1':
                     self.login_a()
+                    return
                 elif choice == '2':
                     pass
                     # TODO : FORGOT PASSWORD
