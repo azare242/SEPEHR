@@ -21,8 +21,8 @@ Menu = {
 }
 
 
-def get_user_menu(fname, lname, **kwargs):
-    return f"""--WELCOME {fname} {lname}
+def get_user_menu(**kwargs):
+    return f"""--WELCOME
     you have {kwargs['m_count']} unread messages and {kwargs['p_count']} pending friends requests
     1.Send Message
     2.Read Messages

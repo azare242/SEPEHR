@@ -74,14 +74,23 @@ class Parser:
         WHERE sepehr.users.{data[0]} = '%{data[1]}%'
         """)
 
+    def create_string(self, data):
+        temp = []
+        for x in data:
+            temp.append(x[0])
+        return '//'.join(temp)
+
     def get_friends_list(self,username):
-        return self.dbc.execute_query(f"""
+        friends = self.dbc.execute_query(f"""
         SELECT sepehr.friends.USER_ID1 FROM sepehr.friends
         WHERE sepehr.friends.USER_ID2 = '{username}'
         UNION 
         SELECT sepehr.friends.USER_ID2 FROM sepehr.friends
         WHERE sepehr.friends.USER_ID1 = '{username}'
         """)
+        if len(friends) == 0:
+            return ""
+        return self.create_string(friends)
 
     def parse(self, data_received: str, clients: set):
 

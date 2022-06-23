@@ -2,6 +2,7 @@ from Client.View.Menu import Menu
 from Client.Model.Connection import *
 from Utils.Passwords import *
 import re
+from Client.Controller.UserApplication import UserApplication
 
 class App:
     def __init__(self):
@@ -108,7 +109,7 @@ class App:
             response = self.connection.receive()
             if response == "DONE":
                 print('done')
-                # TODO : USERMENU
+                UserApplication(un, self.connection).main_loop()
                 return
             else:
                 print('username or password is wrong try again')
