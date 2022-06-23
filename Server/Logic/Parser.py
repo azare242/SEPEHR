@@ -48,6 +48,10 @@ class Parser:
             INSERT INTO sepehr.users(ID, FNAME, LNAME, PHONE_NUMBER, EMAIL) VALUE 
             ('{data[0]}','{data[2]}','{data[3]}','{data[4]}','{data[5]}')
             """, mode=1)
+            self.dbc.execute_query(f"""
+            INSERT INTO sepehr.passwords(USER_ID, Encrypted_Password) VALUE 
+            ('{data[0]}','{data[1]}')
+            """)
             return 'DONE'
         else:
             return 'ERROR'
