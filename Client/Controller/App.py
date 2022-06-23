@@ -1,7 +1,6 @@
 from Client.View.Menu import Menu
 from Client.Model.Connection import *
-
-
+from Utils.Passwords import *
 class App:
     def __init__(self):
         self.connection = Connection()
@@ -12,6 +11,10 @@ class App:
                 return True
         return False
 
+    def exit_from_server(self):
+        self.connection.send('exit')
+        self.connection.close()
+
     def login_a(self):
         print('Notice: if you want to back enter "<back>"')
         while True:
@@ -21,15 +24,18 @@ class App:
             pw = input('Password : ')
             if pw == '<back>':
                 return
+            print(encrypt(pw))
             self.connection.connect()
-            data = f'login//{un}//{pw}'
+            data = f'login//{un}//{encrypt(pw)}'
             self.connection.send_login_data(data)
             response = self.connection.receive()
             if response == "DONE":
-                # TODO : USER MENU
+                print('done')
+                self.exit_from_server()
+                sys.exit()
                 break
             else:
-                self.connection.close()
+
                 print('username or password is wrong try again')
 
     def login_m(self):

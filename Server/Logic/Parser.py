@@ -22,12 +22,12 @@ class Parser:
         check1 = self.dbc.execute_query(f"""
         SELECT sepehr.users.ID
         FROM sepehr.users
-        WHERE sepehr.users.ID == '{username}'
+        WHERE sepehr.users.ID = '{username}'
         """)
         check2 = self.dbc.execute_query(f"""
         SELECT COUNT(*)
         FROM sepehr.passwords
-        WHERE USER_ID == '{username}' AND ENCRYPTED_PASSWORD == '{password}'
+        WHERE USER_ID = '{username}' AND ENCRYPTED_PASSWORD = '{password}'
         """)
         if len(check1) == 1 and check2[0][0] == 1:
             return "DONE"
@@ -40,6 +40,7 @@ class Parser:
             result = [self.login(info[1], info[2]), 'LOGIN', info[1]]
             if result[0] != 'ERROR':
                 clients.add(info[1])
+                return 'DONE'
         elif info[0] == 'signup':
             pass
             # TODO : SIGNUP
