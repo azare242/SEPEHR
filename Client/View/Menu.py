@@ -23,13 +23,13 @@ Menu = {
 
 
 def get_user_menu(**kwargs):
-    return f"""--WELCOME
-    you have {kwargs['m_count']} unread messages and {kwargs['p_count']} pending friends requests
+    return f"""--WELCOME--
     1.Send Message
     2.Read Messages
     3.Search Users
     4.Add Friend
     5.Remove Friend
-    6.Blocks
-    7.DELETE ACCOUNT
+    6.Friend Requests
+    7.Blocks
+    78.DELETE ACCOUNT
     0.logout"""

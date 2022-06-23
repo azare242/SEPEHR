@@ -52,9 +52,18 @@ class UserApplication:
         response = self.connection.receive()
         print(response)
 
+    def add_friend(self):
+        u = input('enter your new friend username or <back> for back: ')
+        data = f'add-friend//{self.username}//{u}'
+        self.connection.send(data)
+        response = self.connection.receive()
+        if response == 'DONE':
+            print('your request in pending')
+        return
+
     def main_loop(self):
         while True:
-            print(get_user_menu(m_count=0, p_count=0))
+            print(get_user_menu())
             c = input()
             if self.check(c, [str(x) for x in range(0, 8)]):
                 if c == '0':
@@ -68,6 +77,8 @@ class UserApplication:
                     self.read_messages()
                 elif c == '3':
                     self.search()
+                elif c == '4':
+                    self.add_friend()
 
     def check_message_friend(self, username: str):
         for x in self.friends:

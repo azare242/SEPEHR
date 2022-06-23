@@ -138,6 +138,11 @@ class Parser:
         messages = self.dbc.execute_query(q1)
         return self.create_messages_string(messages)
 
+    def add_friend(self, data):
+        q1 = f"""
+        INSERT INTO sepehr.pending_friend_requests(USER_ID_SENDER, USER_ID_RECIVER) VALUE ('{data[0]}','{data[1]}')
+        """
+        self.dbc.execute_query(q1, mode=1)
 
     def parse(self, data_received: str, clients: set):
 
@@ -173,6 +178,9 @@ class Parser:
             self.send_message(info[1:])
         elif info[0] == 'get-messages':
             return self.get_messages(info[1:])
+        elif info[0] == 'add-friend':
+            self.add_friend(info[1:])
+            return "DONE"
         elif info[0] == 'friend-request':
             pass
             # TODO : FRIEND-REQUEST
