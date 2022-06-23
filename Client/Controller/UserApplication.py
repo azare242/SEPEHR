@@ -54,12 +54,45 @@ class UserApplication:
 
     def add_friend(self):
         u = input('enter your new friend username or <back> for back: ')
+        if u == '<back>':
+            return
+
         data = f'add-friend//{self.username}//{u}'
         self.connection.send(data)
         response = self.connection.receive()
         if response == 'DONE':
             print('your request in pending')
+        elif response == 'ERROR':
+            print('invalid')
         return
+
+    def print_friend_requests(self):
+        data = f'friend-requests//{self.username}'
+        self.connection.send(data)
+        response = self.connection.receive()
+        i = 1
+        for x in response.split('//'):
+            print(f'{i} - {x}')
+        return response.split('//')
+
+    def friend_requests(self):
+        p = self.print_friend_requests()
+        c = input('Enter like username-><i> (i = 0 accept i = 1 reject) and <back> for back:')
+        if c == '<back>':
+            return
+
+        cs = c.split('->')
+        if not self.check(cs[0], p):
+            print('invalid')
+            return
+        mode = None
+        if cs[1] == '0':
+            mode = 'accept-request'
+        else:
+            mode = 'reject-request'
+        data = f'{mode}//{self.username}//{c}'
+        self.connection.send(data)
+        self.connection.receive()
 
     def main_loop(self):
         while True:
@@ -79,6 +112,8 @@ class UserApplication:
                     self.search()
                 elif c == '4':
                     self.add_friend()
+                elif c == '6':
+                    self.friend_requests()
 
     def check_message_friend(self, username: str):
         for x in self.friends:
@@ -95,7 +130,7 @@ class UserApplication:
             print('Add some friends')
             return
         self.print_friends_list()
-        m = input('Enter Like : message/friend username or <back> for back')
+        m = input('Enter Like : message->friend username or <back> for back')
         if m == '<back>':
             return
         ms = m.split('->')

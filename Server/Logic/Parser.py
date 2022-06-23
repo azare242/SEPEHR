@@ -139,11 +139,53 @@ class Parser:
         messages = self.dbc.execute_query(q1)
         return self.create_messages_string(messages)
 
+    def check_username(self, username):
+        q = f"""
+        SELECT ID FROM sepehr.users WHERE ID = '{username}'
+        """
+        return len(self.dbc.execute_query(q)) != 0
+
     def add_friend(self, data):
+        if self.check_username(data[1]):
+            q1 = f"""
+            INSERT INTO sepehr.pending_friend_requests(USER_ID_SENDER, USER_ID_RECIVER) VALUE ('{data[0]}','{data[1]}')
+            """
+            self.dbc.execute_query(q1, mode=1)
+            return "DONE"
+        else:
+            return "ERROR"
+
+    def friend_requests(self, data):
+        q = f"""
+        SELECT USER_ID_SENDER FROM sepehr.pending_friend_requests
+        WHERE USER_ID_RECIVER = '{data}' AND IS_ACCEPTED = 0
+        """
+        requests = self.dbc.execute_query(q)
+        res = self.create_string(requests)
+        return res
+
+    def accept_request(self, data):
         q1 = f"""
-        INSERT INTO sepehr.pending_friend_requests(USER_ID_SENDER, USER_ID_RECIVER) VALUE ('{data[0]}','{data[1]}')
+        UPDATE sepehr.pending_friend_requests
+        SET IS_ACCEPTED = 1
+        WHERE USER_ID_RECIVER = '{data[0]}' AND USER_ID_SENDER = '{data[1]}' AND IS_ACCEPTED = 0
         """
         self.dbc.execute_query(q1, mode=1)
+        q2 = f"""
+        INSERT INTO sepehr.friends(USER_ID1, USER_ID2) VALUE 
+        ('{data[0]}','{data[1]}')
+        """
+        self.dbc.execute_query(q2, mode=1)
+        return "OK"
+
+    def reject_request(self, data):
+        q1 = f"""
+                UPDATE sepehr.pending_friend_requests
+                SET IS_ACCEPTED = -1
+                WHERE USER_ID_RECIVER = '{data[0]}' AND USER_ID_SENDER = '{data[1]}'
+                """
+        self.dbc.execute_query(q1, mode=1)
+        return "OK"
 
     def parse(self, data_received: str, clients: set):
 
@@ -180,11 +222,14 @@ class Parser:
         elif info[0] == 'get-messages':
             return self.get_messages(info[1:])
         elif info[0] == 'add-friend':
-            self.add_friend(info[1:])
-            return "DONE"
-        elif info[0] == 'friend-request':
-            pass
-            # TODO : FRIEND-REQUEST
+            return self.add_friend(info[1:])
+        elif info[0] == 'friend-requests':
+            return self.friend_requests(info[1])
+        elif info[0] == 'accept-request':
+            return self.accept_request(info[1:])
+        elif info[0] == 'reject-request':
+            return self.reject_request(info[1:])
+
         # TODO : OTHER COMMANDS
         # TODO : LOGGING
         return 'ERROR'

@@ -31,5 +31,5 @@ def get_user_menu(**kwargs):
     5.Remove Friend
     6.Friend Requests
     7.Blocks
-    78.DELETE ACCOUNT
+    8.DELETE ACCOUNT
     0.logout"""
