@@ -26,7 +26,9 @@ def get_user_menu(fname, lname, **kwargs):
     you have {kwargs['m_count']} unread messages and {kwargs['p_count']} pending friends requests
     1.Send Message
     2.Read Messages
-    2.Search Users
-    3.Add Friend
-    4.Blocks
+    3.Search Users
+    4.Add Friend
+    5.Remove Friend
+    6.Blocks
+    7.DELETE ACCOUNT
     0.logout"""

@@ -139,7 +139,7 @@ class App:
                 sys.exit()
             elif cmd_in == '1':
                 self.login_m()
-                # TODO : LOGIN
+                return
             elif cmd_in == '2':
                 self.signup_m()
             else:

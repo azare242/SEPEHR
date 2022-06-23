@@ -110,6 +110,9 @@ class Parser:
             return self.search(info[1:])
         elif info[0] == 'friends':
             return self.get_friends_list(info[1])
+        elif info[0] == 'logout':
+            clients.remove(info[1])
+            return "DONE"
         elif info[0] == 'send-message':
             pass
             # TODO : SEND-MESSAGE
