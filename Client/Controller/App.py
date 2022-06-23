@@ -74,8 +74,7 @@ class App:
                 data = f'create-security-question//{un}//{q}//{a}'
                 self.connection.send(data)
                 print('done')
-                self.exit_from_server()
-                # TODO : USERMENU
+                UserApplication(un, self.connection).main_loop()
                 return
             else:
                 print("username exists or something went wrong try again")

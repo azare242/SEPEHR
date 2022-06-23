@@ -27,7 +27,7 @@ class Connection:
     def connect(self):
         self.socket.connect((self.HOST, self.PORT))
 
-    def close(self,mode=0):
+    def close(self, mode=0):
         self.socket.close()
         if mode == 1:
             sys.exit()
