@@ -64,6 +64,7 @@ class App:
             self.connection.send(data)
             response = self.connection.receive()
             if response == 'DONE':
+                # TODO : CREATE SECURITY QUESTION
                 print('done')
                 self.exit_from_server()
                 # TODO : USERMENU

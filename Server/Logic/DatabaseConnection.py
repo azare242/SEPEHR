@@ -28,6 +28,7 @@ class DatabaseConnection:
         except mysql.connector.Error as err:
             print(err)
             response = 'ERROR'
+            self.connection.rollback()
         finally:
             if cursor is not None:
                 cursor.close()

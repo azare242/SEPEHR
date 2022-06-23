@@ -34,19 +34,36 @@ class Parser:
         else:
             return "ERROR"
 
+    def new_user_check(self,username, phone_number, email):
+        check = self.dbc.execute_query(f"""
+        SELECT count(*)
+        FROM sepehr.users
+        WHERE sepehr.users.ID = {username} OR sepehr.users.PHONE_NUMBER = {phone_number} OR sepehr.users.EMAIL = {email}
+        """)
+        return check[0][0] == 0
+    def signup(self,data):
+        if self.new_user_check(data[0], data[4], data[5]):
+            self.dbc.execute_query(f"""
+            INSERT INTO sepehr.users(ID, FNAME, LNAME, PHONE_NUMBER, EMAIL) VALUE 
+            ({data[0]},{data[2]},{data[3]},{data[4]},{data[5]})
+            """, mode=1)
+            return 'DONE'
+        else:
+            return 'ERROR'
+
     def parse(self, data_received: str, clients: set):
         info = data_received.split('//')
         if info[0] == 'login':
-            result = [self.login(info[1], info[2]), 'LOGIN', info[1]]
-            if result[0] != 'ERROR':
+            result = self.login(info[1], info[2])
+            if result != 'ERROR':
                 if not clients.__contains__(info[1]):
                     clients.add(info[1])
                     return 'DONE'
                 else:
                     return 'ERROR'
         elif info[0] == 'signup':
-            pass
-            # TODO : SIGNUP
+            result = self.signup(data_received[1:])
+            return result
         elif info[0] == 'send-message':
             pass
             # TODO : SEND-MESSAGE
