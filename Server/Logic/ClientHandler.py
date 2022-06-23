@@ -1,6 +1,5 @@
 import threading
 import socket
-from Server.Model.User import User
 from Server.Logic.Parser import *
 from Server.Logic.DatabaseConnection import *
 from Server.Logic.Parser import *

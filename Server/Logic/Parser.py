@@ -62,7 +62,23 @@ class Parser:
         VALUE ('{data[0]}', '{data[1]}', '{data[2]}')
         """, mode=1)
 
+    def search(self, data):
+        return self.dbc.execute_query(f"""
+        SELECT sepehr.users.ID from sepehr.users
+        WHERE sepehr.users.{data[0]} = '%{data[1]}%'
+        """)
+
+    def get_friends_list(self,username):
+        return self.dbc.execute_query(f"""
+        SELECT sepehr.friends.USER_ID1 FROM sepehr.friends
+        WHERE sepehr.friends.USER_ID2 = '{username}'
+        UNION 
+        SELECT sepehr.friends.USER_ID2 FROM sepehr.friends
+        WHERE sepehr.friends.USER_ID1 = '{username}'
+        """)
+
     def parse(self, data_received: str, clients: set):
+
         info = data_received.split('//')
         if info[0] == 'login':
             result = self.login(info[1], info[2])
@@ -80,9 +96,14 @@ class Parser:
         elif info[0] == 'create-security-question':
             self.create_security_question(info[1:])
             return 'DONE'
+        elif info[0] == 'search':
+            return self.search(info[1:])
+        elif info[0] == 'friends':
+            return self.get_friends_list(info[1])
         elif info[0] == 'send-message':
             pass
             # TODO : SEND-MESSAGE
+
         elif info[0] == 'friend-request':
             pass
             # TODO : FRIEND-REQUEST

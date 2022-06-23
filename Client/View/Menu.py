@@ -10,6 +10,14 @@ Menu = {
     'signup-m': """--SignUp--
     1.SignUp
     x.back""",
+    'search': """--Search By--
+    1.Username
+    2.First name
+    3.Last name
+    4.phone number
+    5.e-mail
+    x.exit
+    """
 }
 
 
