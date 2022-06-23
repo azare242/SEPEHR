@@ -44,13 +44,14 @@ class UserApplication:
             return
         self.print_friends_list()
         c = input('choose <back> for back')
-        if self.check_c(c):
+        if not self.check_c(c):
             print('invalid')
             return
         data = f'get-messages//{self.username}//{self.friends[int(c) - 1]}'
         self.connection.send(data)
         response = self.connection.receive()
-        # SHOW_MESSAGES
+        print(response)
+
     def main_loop(self):
         while True:
             print(get_user_menu(m_count=0, p_count=0))
@@ -64,8 +65,7 @@ class UserApplication:
                 elif c == '1':
                     self.send_message()
                 elif c == '2':
-                    pass
-                    # TODO : READ MESSAGES
+                    self.read_messages()
                 elif c == '3':
                     self.search()
 

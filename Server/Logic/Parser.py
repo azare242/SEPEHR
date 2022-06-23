@@ -113,6 +113,15 @@ class Parser:
         logtxt = f"""
         send message from {data[1]} ro {data[2]} successfully
         """
+        self.log('INFO', logtxt)
+
+    def create_messages_string(self, tuples):
+        res = ''
+        for x in tuples:
+            txt = x[0]
+            s = x[1]
+            res = res + f'[Message:{txt}\nSendBy:{s}]\n'
+        return res
 
     def get_messages(self, data):
         q1 = f"""
@@ -127,7 +136,7 @@ class Parser:
         AND USER_ID_SENDER = '{data[1]}' AND USER_ID_RECIVER = '{data[0]}'
         """
         messages = self.dbc.execute_query(q1)
-        # TODO : CREATE MESSAGES STRING
+        return self.create_messages_string(messages)
 
 
     def parse(self, data_received: str, clients: set):
@@ -163,8 +172,7 @@ class Parser:
         elif info[0] == 'send-message':
             self.send_message(info[1:])
         elif info[0] == 'get-messages':
-            pass
-            # TODO : GET MESSAGES
+            return self.get_messages(info[1:])
         elif info[0] == 'friend-request':
             pass
             # TODO : FRIEND-REQUEST
