@@ -55,7 +55,7 @@ class Parser:
     def create_security_question(self, data):
         self.dbc.execute_query(f"""
         INSERT INTO sepehr.security_questions(USER_ID, Question, Answer) 
-        VALUE ('{data[1]}', '{data[2]}', '{data[3]}')
+        VALUE ('{data[0]}', '{data[1]}', '{data[2]}')
         """, mode=1)
 
     def parse(self, data_received: str, clients: set):
