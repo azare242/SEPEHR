@@ -34,7 +34,7 @@ class Parser:
         else:
             return "ERROR"
 
-    def new_user_check(self,username, phone_number, email):
+    def new_user_check(self, username, phone_number, email):
         check = self.dbc.execute_query(f"""
         SELECT count(*)
         FROM sepehr.users
@@ -42,7 +42,7 @@ class Parser:
         """)
         return check[0][0] == 0
 
-    def signup(self,data):
+    def signup(self, data):
         if self.new_user_check(data[0], data[4], data[5]):
             self.dbc.execute_query(f"""
             INSERT INTO sepehr.users(ID, FNAME, LNAME, PHONE_NUMBER, EMAIL) VALUE 
@@ -52,12 +52,11 @@ class Parser:
         else:
             return 'ERROR'
 
-    def create_security_question(self,data):
+    def create_security_question(self, data):
         self.dbc.execute_query(f"""
         INSERT INTO sepehr.security_questions(USER_ID, Question, Answer) 
         VALUE ('{data[1]}', '{data[2]}', '{data[3]}')
         """, mode=1)
-
 
     def parse(self, data_received: str, clients: set):
         info = data_received.split('//')
@@ -71,10 +70,12 @@ class Parser:
                     return 'ERROR'
         elif info[0] == 'signup':
             result = self.signup(info[1:])
+            clients.add(info[1])
             return result
 
         elif info[0] == 'create-security-question':
             self.create_security_question(info[1:])
+            return 'DONE'
         elif info[0] == 'send-message':
             pass
             # TODO : SEND-MESSAGE
@@ -83,3 +84,4 @@ class Parser:
             # TODO : FRIEND-REQUEST
         # TODO : OTHER COMMANDS
         # TODO : LOGGING
+        return 'ERROR'

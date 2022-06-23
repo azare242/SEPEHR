@@ -75,6 +75,7 @@ class App:
                 print('done')
                 self.exit_from_server()
                 # TODO : USERMENU
+                return
             else:
                 print("username exists or something went wrong try again")
                 return
@@ -107,10 +108,11 @@ class App:
             response = self.connection.receive()
             if response == "DONE":
                 print('done')
-                self.exit_from_server()
-                break
+                # TODO : USERMENU
+                return
             else:
                 print('username or password is wrong try again')
+                return
 
     def login_m(self):
         print(Menu['login-m'])
@@ -129,9 +131,9 @@ class App:
 
     def run(self):
         cmd_in = None
-        print(Menu['main'])
         # self.connection.send('HI')
         while True:
+            print(Menu['main'])
             cmd_in = input()
             if cmd_in == 'x':
                 sys.exit()
