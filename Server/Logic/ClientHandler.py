@@ -26,7 +26,7 @@ class ClientHandler:
                     break
                 response = self.parser.parse(data_received, self.server_clients)
                 self.client_socket.send(response.encode('utf-8'))
-                if data_received.__contains__('login') and response == 'DONE':
+                if (data_received.__contains__('login') or data_received.__contains__('signup')) and response == 'DONE':
                     username = data_received.split('//')[1]
 
         except socket.error as err:
