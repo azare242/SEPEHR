@@ -92,7 +92,6 @@ class Parser:
         SELECT sepehr.friends.USER_ID2 FROM sepehr.friends
         WHERE sepehr.friends.USER_ID1 = '{username}'
         """)
-        print(friends)
         if len(friends) == 0:
             return "EMPTY"
         return self.create_string(friends)
@@ -195,6 +194,25 @@ class Parser:
         self.dbc.execute_query(q, mode=1)
         return "OK"
 
+    def block(self, data):
+        q = f"""
+        INSERT INTO sepehr.blocks(USER_ID_BLOCKER, USER_ID_BLOCKED) VALUE 
+        ('{data[0]}','{data[1]}')
+        """
+        self.dbc.execute_query(q, mode=1)
+        friends = self.dbc.execute_query(f"""
+                SELECT sepehr.friends.USER_ID1 FROM sepehr.friends
+                WHERE sepehr.friends.USER_ID2 = '{data[0]}'
+                UNION 
+                SELECT sepehr.friends.USER_ID2 FROM sepehr.friends
+                WHERE sepehr.friends.USER_ID1 = '{data[0]}'
+                """)
+        ff = self.create_string(friends).split('//')
+        if ff.__contains__(data[1]):
+            self.remove_friend(data)
+        return "OK"
+
+
     def parse(self, data_received: str, clients: set):
 
         info = data_received.split('//')
@@ -239,7 +257,8 @@ class Parser:
             return self.reject_request(info[1:])
         elif info[0] == 'remove-friend':
             return self.remove_friend(info[1:])
-
+        elif info[0] == 'block':
+            return self.block()
         # TODO : OTHER COMMANDS
         # TODO : LOGGING
         return 'ERROR'

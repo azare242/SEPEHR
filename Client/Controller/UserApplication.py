@@ -107,6 +107,14 @@ class UserApplication:
         self.connection.receive()
         self.friends = get_friends_list(self.username, self.connection)
 
+    def block(self):
+        c = input('enter username to block or <back> to back: ')
+        if c == '<back>':
+            return
+        data = f'block//{self.username}//{c}'
+        self.connection.send(data)
+        self.connection.receive()
+
     def main_loop(self):
         while True:
             print(get_user_menu())
@@ -129,6 +137,8 @@ class UserApplication:
                     pass
                 elif c == '6':
                     self.friend_requests()
+                elif c == '7':
+                    pass
 
     def check_message_friend(self, username: str):
         for x in self.friends:
