@@ -214,7 +214,7 @@ class Parser:
         if ff.__contains__(data[1]):
             self.remove_friend(data)
         logtxt = f"""USER {data[0]} BLOCKED {data[1]}"""
-        self.log('INFO',logtxt)
+        self.log('INFO', logtxt)
         return "OK"
 
     def security_q_a(self, username):
@@ -236,7 +236,7 @@ class Parser:
         """
         self.dbc.execute_query(q, mode=1)
         logtxt = f"""USER {data[0]} CHANGED PASSWORD"""
-        self.log('INFO',logtxt)
+        self.log('INFO', logtxt)
         return 'OK'
 
     def like(self, data):
@@ -253,11 +253,18 @@ class Parser:
         SET deleted = 1
         WHERE ID = '{username}'
         """
-        self.dbc.execute_query(q,mode=1)
+        self.dbc.execute_query(q, mode=1)
         logtxt = f""" USER {username} DELETED"""
-        self.log('INFO',logtxt)
+        self.log('INFO', logtxt)
         return 'OK'
 
+    def unblock(self, data):
+        q = f"""
+        DELETE FROM sepehr.blocks
+        WHERE USER_ID_BLOCKER = '{data[0]}' AND USER_ID_BLOCKED = '{data[1]}'
+        """
+        self.dbc.execute_query(q, mode=1)
+        return 'OK'
 
     def parse(self, data_received: str, clients: set):
 
@@ -311,6 +318,8 @@ class Parser:
         elif info[0] == 'like':
             return self.like(info[1:])
         elif info[0] == 'delete-account':
-            self.delete_account(info[1])
+            return self.delete_account(info[1])
+        elif info[0] == 'unblock':
+            return self.unblock(info[1:])
 
         return 'ERROR'
