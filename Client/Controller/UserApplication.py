@@ -25,6 +25,7 @@ class UserApplication:
         i = 1
         for x in self.friends:
             print(f'{i} - {x}')
+            i +=1
 
     def check(self, choice: str, corrects: list):
         for c in corrects:
@@ -49,6 +50,7 @@ class UserApplication:
             m = Message(d2)
             l.append(m)
             print(f'{i} - {m}')
+            i += 1
         return l
 
     def read_messages(self):
@@ -94,6 +96,7 @@ class UserApplication:
         i = 1
         for x in response.split('//'):
             print(f'{i} - {x}')
+            i += 1
         return response.split('//')
 
     def friend_requests(self):
@@ -138,6 +141,7 @@ class UserApplication:
         i = 1
         for x in blocks2:
             print(f'{i} - {x}')
+            i += 1
 
     def block(self):
         data = f'block-list//{self.username}'
@@ -227,6 +231,7 @@ class UserApplication:
         i = 1
         for x in data:
             print(f'{i} - {x}')
+            i += 1
 
     def search(self):
         elements = ['ID', 'FNAME', 'LNAME', 'PHONE_NUMBER', 'EMAIL']

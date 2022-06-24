@@ -69,6 +69,8 @@ class Parser:
         """, mode=1)
 
     def create_string(self, data):
+        if len(data) == 0:
+            return "EMPTY"
         temp = []
         for x in data:
             temp.append(x[0])
