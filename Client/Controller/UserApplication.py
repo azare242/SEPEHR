@@ -1,7 +1,7 @@
 from Client.Model.Connection import Connection
 from Client.Model.Disconnector import disconnect
 from Client.View.Menu import *
-
+from Client.Model.Message import *
 
 def get_friends_list(username, connection: Connection):
     l_res = []
@@ -39,6 +39,18 @@ class UserApplication:
                 return True
         return False
 
+
+    def print_messages(self, data: str):
+        l = []
+        data2 = data.split('***')
+        i = 1
+        for d in data2:
+            d2 = d.split('//')
+            m = Message(d2)
+            l.append(m)
+            print(f'{i} - {m}')
+        return l
+
     def read_messages(self):
         if len(self.friends) == 0:
             print('Add some friends')
@@ -51,7 +63,15 @@ class UserApplication:
         data = f'get-messages//{self.username}//{self.friends[int(c) - 1]}'
         self.connection.send(data)
         response = self.connection.receive()
-        print(response)
+        l = self.print_messages(response)
+        like = input('if you want like enter index of message or <back> for back: ')
+        if like == '<back>':
+            return
+        like = int(like) - 1
+        data = f'like//{self.username}//{l[like].id}'
+        self.connection.send(data)
+        self.connection.receive()
+
 
     def add_friend(self):
         u = input('enter your new friend username or <back> for back: ')
@@ -156,6 +176,22 @@ class UserApplication:
                     self.friend_requests()
                 elif c == '7':
                     self.block()
+                elif c == 8:
+                    t = self.delete_account()
+                    if t:
+                        print('Good bye')
+                        return
+
+
+    def delete_account(self):
+        if input('do you sure? 1 for yes anything for no :,( :') == '1':
+            data = f'delete-account//{self.username}'
+            self.connection.send(data)
+            self.connection.receive()
+            disconnect(self.connection)
+            return True
+        else:
+            return False
 
     def check_message_friend(self, username: str):
         for x in self.friends:

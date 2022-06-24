@@ -17,7 +17,7 @@ class Parser:
         check1 = self.dbc.execute_query(f"""
         SELECT sepehr.users.ID
         FROM sepehr.users
-        WHERE sepehr.users.ID = '{username}'
+        WHERE sepehr.users.ID = '{username}' and deleted = 0
         """)
         check2 = self.dbc.execute_query(f"""
         SELECT COUNT(*)
@@ -117,20 +117,22 @@ class Parser:
 
     def create_messages_string(self, tuples):
         res = ''
+        i = 1
         for x in tuples:
             txt = x[0]
             s = x[1]
-            res = res + f'[Message:{txt}\nSendBy:{s}]\n'
+            id = x[2]
+            res = res + f'{id}//{txt}//{s}***'
         return res
 
     def get_messages(self, data):
         q1 = f"""
-        SELECT TEXT,USER_ID_SENDER,USER_ID_RECIVER
+        SELECT TEXT,USER_ID_SENDER,=MESSAGE_ID
         FROM sepehr.messages AS M , sepehr.sender_reciver_messages AS SRM
         WHERE M.ID = SRM.MESSAGE_ID 
         AND USER_ID_SENDER = '{data[0]}' AND USER_ID_RECIVER = '{data[1]}'
         UNION 
-        SELECT TEXT,USER_ID_SENDER,USER_ID_RECIVER
+        SELECT TEXT,USER_ID_SENDER,MESSAGE_ID
         FROM sepehr.messages AS M , sepehr.sender_reciver_messages AS SRM
         WHERE M.ID = SRM.MESSAGE_ID 
         AND USER_ID_SENDER = '{data[1]}' AND USER_ID_RECIVER = '{data[0]}'
@@ -233,6 +235,24 @@ class Parser:
         self.dbc.execute_query(q, mode=1)
         return 'OK'
 
+    def like(self, data):
+        q = f"""
+        INSERT INTO sepehr.likes(MESSAGE_ID, USER_ID_LIKER)  VALUE 
+        ('{data[1]}','{data[0]}')
+        """
+        self.dbc.execute_query(q, mode=1)
+        return 'OK'
+
+    def delete_account(self, username):
+        q = f"""
+        UPDATE sepehr.users 
+        SET deleted = 1
+        WHERE ID = '{username}'
+        """
+        self.dbc.execute_query(q,mode=1)
+        return 'OK'
+
+
     def parse(self, data_received: str, clients: set):
 
         info = data_received.split('//')
@@ -282,5 +302,9 @@ class Parser:
             return self.security_q_a(info[1])
         elif info[0] == 'change-password':
             return self.change_password(info[1:])
+        elif info[0] == 'like':
+            return self.like(info[1:])
+        elif info[0] == 'delete-account':
+            self.delete_account(info[1])
 
         return 'ERROR'
