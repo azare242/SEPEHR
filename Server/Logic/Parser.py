@@ -164,17 +164,18 @@ class Parser:
         return res
 
     def accept_request(self, data):
+        print(data)
         q1 = f"""
         UPDATE sepehr.pending_friend_requests
         SET IS_ACCEPTED = 1
         WHERE USER_ID_RECIVER = '{data[0]}' AND USER_ID_SENDER = '{data[1]}' AND IS_ACCEPTED = 0
         """
-        self.dbc.execute_query(q1, mode=1)
+        print(self.dbc.execute_query(q1, mode=1))
         q2 = f"""
         INSERT INTO sepehr.friends(USER_ID1, USER_ID2) VALUE 
-        ('{data[0]}','{data[1]}')
+        ('{data[1]}','{data[0]}')
         """
-        self.dbc.execute_query(q2, mode=1)
+        print(self.dbc.execute_query(q2, mode=1))
         return "OK"
 
     def reject_request(self, data):
@@ -183,7 +184,7 @@ class Parser:
                 SET IS_ACCEPTED = -1
                 WHERE USER_ID_RECIVER = '{data[0]}' AND USER_ID_SENDER = '{data[1]}'
                 """
-        self.dbc.execute_query(q1, mode=1)
+        print(self.dbc.execute_query(q1, mode=1))
         return "OK"
 
     def remove_friend(self, data):
@@ -251,9 +252,9 @@ class Parser:
             return self.add_friend(info[1:])
         elif info[0] == 'friend-requests':
             return self.friend_requests(info[1])
-        elif info[0] == 'accept-request':
+        elif info[0] == 'accept':
             return self.accept_request(info[1:])
-        elif info[0] == 'reject-request':
+        elif info[0] == 'reject':
             return self.reject_request(info[1:])
         elif info[0] == 'remove-friend':
             return self.remove_friend(info[1:])

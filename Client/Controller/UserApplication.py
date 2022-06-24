@@ -82,15 +82,17 @@ class UserApplication:
             return
 
         cs = c.split('->')
+        print(cs)
         if not self.check(cs[0], p):
             print('invalid')
             return
         mode = None
         if cs[1] == '0':
-            mode = 'accept-request'
+            mode = 'accept'
         else:
-            mode = 'reject-request'
-        data = f'{mode}//{self.username}//{c}'
+            mode = 'reject'
+        print(f'{cs[0]} {mode}')
+        data = f'{mode}//{self.username}//{cs[0]}'
         self.connection.send(data)
         self.connection.receive()
 
