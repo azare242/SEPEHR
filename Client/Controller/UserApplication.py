@@ -109,13 +109,29 @@ class UserApplication:
         self.connection.receive()
         self.friends = get_friends_list(self.username, self.connection)
 
+    def print_blocks(self, blocks: str):
+        if blocks == 'EMPTY':
+            print('nothing...')
+            return
+        blocks2 = blocks.split('//')
+        i = 1
+        for x in blocks2:
+            print(f'{i} - {x}')
+
     def block(self):
-        c = input('enter username to block or <back> to back: ')
+        data = f'block-list//{self.username}'
+        self.connection.send(data)
+        response = self.connection.receive()
+        self.print_blocks(response)
+        c = input('enter like username->block/unblock <back> to back: ')
         if c == '<back>':
             return
-        data = f'block//{self.username}//{c}'
+        cs = c.split('->')
+        data = f'{cs[1]}//{self.username}//{cs[0]}'
         self.connection.send(data)
         self.connection.receive()
+        if cs[1] == 'block':
+            self.friends = get_friends_list(self.username, self.connection)
 
     def main_loop(self):
         while True:
@@ -140,7 +156,7 @@ class UserApplication:
                 elif c == '6':
                     self.friend_requests()
                 elif c == '7':
-                    pass
+                    self.block()
 
     def check_message_friend(self, username: str):
         for x in self.friends:
