@@ -213,6 +213,8 @@ class Parser:
         ff = self.create_string(friends).split('//')
         if ff.__contains__(data[1]):
             self.remove_friend(data)
+        logtxt = f"""USER {data[0]} BLOCKED {data[1]}"""
+        self.log('INFO',logtxt)
         return "OK"
 
     def security_q_a(self, username):
@@ -233,6 +235,8 @@ class Parser:
         WHERE USER_ID = '{data[0]}'
         """
         self.dbc.execute_query(q, mode=1)
+        logtxt = f"""USER {data[0]} CHANGED PASSWORD"""
+        self.log('INFO',logtxt)
         return 'OK'
 
     def like(self, data):
@@ -250,6 +254,8 @@ class Parser:
         WHERE ID = '{username}'
         """
         self.dbc.execute_query(q,mode=1)
+        logtxt = f""" USER {username} DELETED"""
+        self.log('INFO',logtxt)
         return 'OK'
 
 
