@@ -187,6 +187,14 @@ class Parser:
         self.dbc.execute_query(q1, mode=1)
         return "OK"
 
+    def remove_friend(self, data):
+        q = f"""
+        DELETE FROM sepehr.friends
+        WHERE (USER_ID1 = '{data[0]}' and USER_ID2 = '{data[1]}') OR (USER_ID1 = '{data[1]}' and USER_ID2 = '{data[0]}')
+        """
+        self.dbc.execute_query(q, mode=1)
+        return "OK"
+
     def parse(self, data_received: str, clients: set):
 
         info = data_received.split('//')
@@ -229,6 +237,8 @@ class Parser:
             return self.accept_request(info[1:])
         elif info[0] == 'reject-request':
             return self.reject_request(info[1:])
+        elif info[0] == 'remove-friend':
+            return self.remove_friend(info[1:])
 
         # TODO : OTHER COMMANDS
         # TODO : LOGGING

@@ -94,6 +94,19 @@ class UserApplication:
         self.connection.send(data)
         self.connection.receive()
 
+    def remove_friend(self):
+        self.print_friends_list()
+        c = input('enter username to delete or <back> for back:')
+        if c == '<back>':
+            return
+        if not self.check(c, self.friends):
+            print('invalid')
+            return
+        data = f'remove-friend//{self.username}//{c}'
+        self.connection.send(data)
+        self.connection.receive()
+        self.friends = get_friends_list(self.username, self.connection)
+
     def main_loop(self):
         while True:
             print(get_user_menu())
@@ -112,6 +125,8 @@ class UserApplication:
                     self.search()
                 elif c == '4':
                     self.add_friend()
+                elif c == '5':
+                    pass
                 elif c == '6':
                     self.friend_requests()
 
