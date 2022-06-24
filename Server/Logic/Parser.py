@@ -118,6 +118,8 @@ class Parser:
         self.log('INFO', logtxt)
 
     def create_messages_string(self, tuples):
+        if len(tuples) == 0:
+            return "EMPTY"
         res = ''
         i = 1
         for x in tuples:
@@ -125,11 +127,12 @@ class Parser:
             s = x[1]
             id = x[2]
             res = res + f'{id}//{txt}//{s}***'
+        print(res)
         return res
 
     def get_messages(self, data):
         q1 = f"""
-        SELECT TEXT,USER_ID_SENDER,=MESSAGE_ID
+        SELECT TEXT,USER_ID_SENDER,MESSAGE_ID
         FROM sepehr.messages AS M , sepehr.sender_reciver_messages AS SRM
         WHERE M.ID = SRM.MESSAGE_ID 
         AND USER_ID_SENDER = '{data[0]}' AND USER_ID_RECIVER = '{data[1]}'

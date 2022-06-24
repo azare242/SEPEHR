@@ -34,7 +34,7 @@ class UserApplication:
         return False
 
     def check_c(self, c):
-        l = [str(x) for x in range(0, len(self.friends))]
+        l = [str(x) for x in range(1, len(self.friends) + 1)]
         for x in l:
             if c == x:
                 return True
@@ -42,15 +42,21 @@ class UserApplication:
 
 
     def print_messages(self, data: str):
+        if data == "EMPTY":
+            return []
         l = []
         data2 = data.split('***')
+        print('data2 : ' , data2)
         i = 1
         for d in data2:
-            d2 = d.split('//')
-            m = Message(d2)
-            l.append(m)
-            print(f'{i} - {m}')
-            i += 1
+            if len(d) != 0:
+                d2 = d.split('//')
+                print('d2 : ', d2)
+                m = Message(d2)
+                l.append(m)
+                print(f'{i} - {m.get_info()}')
+                i += 1
+
         return l
 
     def read_messages(self):
