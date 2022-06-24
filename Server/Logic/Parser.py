@@ -258,7 +258,7 @@ class Parser:
         elif info[0] == 'remove-friend':
             return self.remove_friend(info[1:])
         elif info[0] == 'block':
-            return self.block()
+            return self.block(info[1:])
         # TODO : OTHER COMMANDS
         # TODO : LOGGING
         return 'ERROR'
