@@ -213,6 +213,25 @@ class Parser:
             self.remove_friend(data)
         return "OK"
 
+    def security_q_a(self, username):
+        q = f"""
+        SELECT Question, Answer
+        FROM sepehr.security_questions
+        WHERE USER_ID = '{username}'
+        """
+        r = self.dbc.execute_query(q)
+        if len(q) == 0:
+            return "ERROR"
+        return self.create_string(r)
+
+    def change_password(self, data):
+        q = f"""
+        UPDATE sepehr.passwords
+        SET Encrypted_Password = '{data[1]}'
+        WHERE USER_ID = '{data[0]}'
+        """
+        self.dbc.execute_query(q, mode=1)
+        return 'OK'
 
     def parse(self, data_received: str, clients: set):
 
@@ -233,7 +252,6 @@ class Parser:
             result = self.signup(info[1:])
             clients.add(info[1])
             return result
-
         elif info[0] == 'create-security-question':
             self.create_security_question(info[1:])
             return 'DONE'
@@ -260,6 +278,9 @@ class Parser:
             return self.remove_friend(info[1:])
         elif info[0] == 'block':
             return self.block(info[1:])
-        # TODO : OTHER COMMANDS
-        # TODO : LOGGING
+        elif info[0] == 'security':
+            return self.security_q_a(info[1])
+        elif info[0] == 'change-password':
+            return self.change_password(info[1:])
+
         return 'ERROR'

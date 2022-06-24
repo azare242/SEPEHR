@@ -5,6 +5,7 @@ import re
 from Client.Controller.UserApplication import UserApplication
 from Client.Model.Disconnector import disconnect
 
+
 def get_email():
     regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
     while True:
@@ -26,8 +27,6 @@ class App:
             if choice == c:
                 return True
         return False
-
-
 
     def get_phone_number(self):
         while True:
@@ -121,11 +120,38 @@ class App:
                     self.login_a()
                     return
                 elif choice == '2':
-                    pass
-                    # TODO : FORGOT PASSWORD
+                    self.forgot_password()
+                    return
                 break
             else:
                 print('invalid input try again', end=':')
+
+    def security_question_check(self, username):
+        data = f'security//{username}'
+        self.connection.send(data)
+        q, a = self.connection.receive().split('//')
+        ain = input(q + ' |||<back> for back')
+        if ain == '<back>':
+            return '<back>'
+        return ain == a
+
+    def change_password(self, username):
+        pw = encrypt(input('new password <back> for back: '))
+        if decrypt(pw) == '<back>':
+            return
+        data = f'change-password//{username}//{pw}'
+        self.connection.send(data)
+        response = self.connection.receive()
+
+    def forgot_password(self):
+        uin = input('Enter Username<back> for back: ')
+        if uin == '<back>':
+            return
+        c = self.security_question_check(uin)
+        if c == '<back>':
+            return
+        if c:
+            self.change_password(uin)
 
     def run(self):
         cmd_in = None
