@@ -140,7 +140,7 @@ class UserApplication:
         self.friends = get_friends_list(self.username, self.connection)
 
     def print_blocks(self, blocks: str):
-        if blocks == 'EMPTY':
+        if blocks == 'ERROR':
             print('nothing...')
             return
         blocks2 = blocks.split('//')
