@@ -1,4 +1,5 @@
 from Client.Model.Connection import Connection
+from Client.Model.Disconnector import disconnect
 from Client.View.Menu import *
 
 
@@ -139,9 +140,7 @@ class UserApplication:
             c = input()
             if self.check(c, [str(x) for x in range(0, 8)]):
                 if c == '0':
-                    self.connection.send(f'logout//{self.username}')
-                    response = self.connection.receive()
-                    self.connection.close()
+                    disconnect(self.connection)
                     return
                 elif c == '1':
                     self.send_message()

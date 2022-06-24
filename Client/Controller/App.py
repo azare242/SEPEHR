@@ -3,6 +3,19 @@ from Client.Model.Connection import *
 from Utils.Passwords import *
 import re
 from Client.Controller.UserApplication import UserApplication
+from Client.Model.Disconnector import disconnect
+
+def get_email():
+    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+    while True:
+        email_in = input('Enter Email: ')
+        if re.search(regex, email_in):
+            return email_in
+        elif email_in == '<back>':
+            return '<back>'
+        else:
+            print('Try Again')
+
 
 class App:
     def __init__(self):
@@ -14,9 +27,7 @@ class App:
                 return True
         return False
 
-    def exit_from_server(self):
-        self.connection.send('exit')
-        self.connection.close()
+
 
     def get_phone_number(self):
         while True:
@@ -27,17 +38,6 @@ class App:
                 return '<back>'
             else:
                 print('Try again')
-
-    def get_email(self):
-        regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-        while True:
-            email_in = input('Enter Email: ')
-            if (re.search(regex,email_in)):
-                return email_in
-            elif email_in == '<back>':
-                return '<back>'
-            else:
-                print('Try Again')
 
     def create_sq(self):
         q = input('Security Question: ')
@@ -59,7 +59,7 @@ class App:
             phone_number = self.get_phone_number()
             if phone_number == '<back>':
                 return
-            e = self.get_email()
+            e = get_email()
             if e == '<back>':
                 return
             pw = encrypt(input('Password : '))
@@ -73,10 +73,10 @@ class App:
                 q, a = self.create_sq()
                 data = f'create-security-question//{un}//{q}//{a}'
                 self.connection.send(data)
-                print('done')
                 UserApplication(un, self.connection).main_loop()
                 return
             else:
+                disconnect(self.connection)
                 print("username exists or something went wrong try again")
                 return
 
@@ -90,7 +90,6 @@ class App:
                 else:
                     self.signup_a()
                     return
-
 
     def login_a(self):
         print('Notice: if you want to back enter "<back>"')
@@ -109,7 +108,8 @@ class App:
                 UserApplication(un, self.connection).main_loop()
                 return
             else:
-                print('username or password is wrong try again')
+                disconnect(self.connection)
+                print('username or password is wrong try again or username logged in')
                 return
 
     def login_m(self):
@@ -129,7 +129,6 @@ class App:
 
     def run(self):
         cmd_in = None
-        # self.connection.send('HI')
         while True:
             print(Menu['main'])
             cmd_in = input()
@@ -137,7 +136,6 @@ class App:
                 sys.exit()
             elif cmd_in == '1':
                 self.login_m()
-                return
             elif cmd_in == '2':
                 self.signup_m()
             else:

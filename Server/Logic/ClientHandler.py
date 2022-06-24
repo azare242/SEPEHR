@@ -16,6 +16,7 @@ class ClientHandler:
     #def client_connection_loop(self):
 
     def handling(self):
+        username = None
         flag = 0
         try:
             while True:
@@ -25,13 +26,17 @@ class ClientHandler:
                     break
                 response = self.parser.parse(data_received, self.server_clients)
                 self.client_socket.send(response.encode('utf-8'))
+                if data_received.__contains__('login') and response == 'DONE':
+                    username = data_received.split('//')[1]
 
         except socket.error as err:
                 print("USER DISCONNECTED")
+                self.server_clients.remove(username)
                 self.client_socket.close()
                 return
         finally:
             if flag == 1:
+                self.server_clients.remove(username)
                 print("USER EXITED")
                 self.client_socket.close()
                 return
