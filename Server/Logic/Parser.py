@@ -103,7 +103,7 @@ class Parser:
         message_id = f'{data[1]}X{data[2]}X{_time_}'
         print(message_id)
         q1 = f"""
-        INSERT INTO sepehr.messages(ID, TEXT, TIME) VALUE 
+        INSERT INTO sepehr.messages(ID, TEXT, sentTIME) VALUE 
         ('{message_id}', '{data[0]}','{_time_}')
         """
         q2 = f"""
@@ -136,11 +136,13 @@ class Parser:
         FROM sepehr.messages AS M , sepehr.sender_reciver_messages AS SRM
         WHERE M.ID = SRM.MESSAGE_ID 
         AND USER_ID_SENDER = '{data[0]}' AND USER_ID_RECIVER = '{data[1]}'
+        ORDER BY ASC sentTIME
         UNION 
         SELECT TEXT,USER_ID_SENDER,MESSAGE_ID
         FROM sepehr.messages AS M , sepehr.sender_reciver_messages AS SRM
         WHERE M.ID = SRM.MESSAGE_ID 
         AND USER_ID_SENDER = '{data[1]}' AND USER_ID_RECIVER = '{data[0]}'
+        ORDER BY ASC sentTIME
         """
         messages = self.dbc.execute_query(q1)
         return self.create_messages_string(messages)
