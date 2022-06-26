@@ -153,8 +153,20 @@ class Parser:
         """
         return len(self.dbc.execute_query(q)) != 0
 
+    def is_blocked(self, user_source, user_target):
+        q = f"""
+        SELECT count(*) FROM
+        sepehr.blocks WHERE USER_ID_BLOCKER = '{user_target}' AND USER_ID_BLOCKED = '{user_source}'
+        """
+        r = self.dbc.execute_query(q)
+        return r[0][0] != 0
+
     def add_friend(self, data):
         if self.check_username(data[1]):
+            if self.is_blocked(data[0], data[1]):
+                return "ERROR"
+            elif self.is_blocked(data[1], data[0]):
+                self.unblock([data[1], data[0]])
             q1 = f"""
             INSERT INTO sepehr.pending_friend_requests(USER_ID_SENDER, USER_ID_RECIVER) VALUE ('{data[0]}','{data[1]}')
             """
