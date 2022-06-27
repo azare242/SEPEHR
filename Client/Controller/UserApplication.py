@@ -3,6 +3,7 @@ from Client.Model.Disconnector import disconnect
 from Client.View.Menu import *
 from Client.Model.Message import *
 
+
 def get_friends_list(username, connection: Connection):
     l_res = []
     data = f'friends//{username}'
@@ -25,7 +26,7 @@ class UserApplication:
         i = 1
         for x in self.friends:
             print(f'{i} - {x}')
-            i +=1
+            i += 1
 
     def check(self, choice: str, corrects: list):
         for c in corrects:
@@ -40,13 +41,12 @@ class UserApplication:
                 return True
         return False
 
-
     def print_messages(self, data: str):
         if data == "EMPTY":
             return []
         l = []
         data2 = data.split('***')
-        print('data2 : ' , data2)
+        print('data2 : ', data2)
         i = 1
         for d in data2:
             if len(d) != 0:
@@ -79,7 +79,6 @@ class UserApplication:
         data = f'like//{self.username}//{l[like].id}'
         self.connection.send(data)
         self.connection.receive()
-
 
     def add_friend(self):
         u = input('enter your new friend username or <back> for back: ')
@@ -191,7 +190,6 @@ class UserApplication:
                     if t:
                         print('Good bye')
                         return
-
 
     def delete_account(self):
         if input('do you sure? 1 for yes anything for no :,( :') == '1':

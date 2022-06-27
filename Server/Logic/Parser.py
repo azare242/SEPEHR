@@ -403,7 +403,7 @@ class Parser:
         elif info[0] == 'check-penalty-fp':
             return self.check_penalty_fp(info[1])
         elif info[0] == 'forgot-password-email':
-            pass
+            return self.forgot_password_email(info[1])
         elif info[0] == 'forgot-password-phone_number':
-            pass
+            return self.forgot_password_phone_number(info[1])
         return 'ERROR'
