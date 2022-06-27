@@ -31,10 +31,3 @@ class Connection:
         self.socket.close()
         if mode == 1:
             sys.exit()
-
-    def send_login_data(self, data: str):
-        try:
-            self.socket.send(data.encode('utf-8'))
-        except socket.error as err:
-            print(err)
-            self.close()

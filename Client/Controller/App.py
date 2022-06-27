@@ -90,26 +90,53 @@ class App:
                     self.signup_a()
                     return
 
+    def check_password(self, correct_password):
+        flag = 0
+        i = 3
+        for _ in range(0, 3):
+            pw = encrypt(input('Password: '))
+            if pw == '<back>':
+                return '<back>'
+
+            if pw == correct_password:
+                flag = 1
+                return True
+            else:
+                i -= 1
+                print(f"PASSWORD INCORRECT you have {i} try")
+
+        return False
+
     def login_a(self):
         print('Notice: if you want to back enter "<back>"')
+
         while True:
             un = input('Username : ').lower()
             if un == '<back>':
                 return
-            pw = input('Password : ')
-            if pw == '<back>':
-                return
-            self.connection.connect()
-            data = f'login//{un}//{encrypt(pw)}'
-            self.connection.send_login_data(data)
-            response = self.connection.receive()
-            if response == "DONE":
-                UserApplication(un, self.connection).main_loop()
-                return
+            data = f'get-password//{un}'
+
+            self.connection.send(data)
+            r = self.connection.receive()
+            if r != "ERROR":
+                pw = self.check_password(r)
+                if pw == '<back>':
+                    return
+                if pw :
+                    data = f'login//{un}//{encrypt(pw)}'
+                    self.connection.send(data)
+                    response = self.connection.receive()
+                    if response == "DONE":
+                        UserApplication(un, self.connection).main_loop()
+                        return
+                    else:
+                        print('user logged in before')
+                        return
+                else:
+                    pass
+                    # TODO : DO PENALTY
             else:
-                disconnect(self.connection)
-                print('username or password is wrong try again or username logged in')
-                return
+                print("username not found")
 
     def login_m(self):
         print(Menu['login-m'])
@@ -154,11 +181,13 @@ class App:
             self.change_password(uin)
 
     def run(self):
+        self.connection.connect()
         cmd_in = None
         while True:
             print(Menu['main'])
             cmd_in = input()
             if cmd_in == 'x':
+                disconnect(self.connection)
                 sys.exit()
             elif cmd_in == '1':
                 self.login_m()

@@ -285,6 +285,16 @@ class Parser:
         self.dbc.execute_query(q, mode=1)
         return 'OK'
 
+    def get_password(self, username):
+        q = f"""
+        SELECT ENCRYPTED_PASSWORD FROM sepehr.passwords
+        WHERE USER_ID = '{username}' 
+        """
+        r = self.dbc.execute_query(q)
+        if len(r) == 0:
+            return "ERROR"
+        return r[0][0]
+
     def parse(self, data_received: str, clients: set):
 
         info = data_received.split('//')
@@ -340,5 +350,6 @@ class Parser:
             return self.delete_account(info[1])
         elif info[0] == 'unblock':
             return self.unblock(info[1:])
-
+        elif info[0] == 'get-password':
+            return self.get_password(info[1])
         return 'ERROR'
