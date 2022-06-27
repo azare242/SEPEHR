@@ -31,11 +31,12 @@ class ClientHandler:
 
         except socket.error as err:
                 print("USER DISCONNECTED")
-                self.server_clients.remove(username)
+                if username is not None:
+                    self.server_clients.remove(username)
                 self.client_socket.close()
                 return
         finally:
-            if flag == 1:
+            if flag == 1 and username is not None:
                 self.server_clients.remove(username)
                 print("USER EXITED")
                 self.client_socket.close()

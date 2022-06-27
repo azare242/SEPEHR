@@ -95,7 +95,7 @@ class App:
         i = 3
         for _ in range(0, 3):
             pw = encrypt(input('Password: '))
-            if pw == '<back>':
+            if decrypt(pw) == '<back>':
                 return '<back>'
 
             if pw == correct_password:
@@ -107,6 +107,12 @@ class App:
 
         return "ERROR"
 
+    def check_penalty_pw(self, username):
+        data = f"check-penalty-pw//{username}"
+        self.connection.send(data)
+        r = self.connection.receive()
+        return r == 'OK'
+
     def login_a(self):
         print('Notice: if you want to back enter "<back>"')
 
@@ -114,7 +120,10 @@ class App:
             un = input('Username : ').lower()
             if un == '<back>':
                 return
-            # TODO : CHECK PENALTY
+            if not self.check_penalty_pw(un):
+                print('you have been restricted form login')
+                return
+
             data = f'get-password//{un}'
 
             self.connection.send(data)

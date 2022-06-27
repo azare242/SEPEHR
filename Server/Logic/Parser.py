@@ -1,6 +1,6 @@
 from Server.Logic.DatabaseConnection import *
 import datetime
-
+from Utils.datetimes import *
 
 class Parser:
     def __init__(self, database_connection: DatabaseConnection):
@@ -295,6 +295,20 @@ class Parser:
             return "ERROR"
         return r[0][0]
 
+    def check_penalty_pw(self, username):
+        q = f"""
+        SELECT ENDTIME FROM sepehr.penalties
+        WHERE USER_ID = '{username}' AND ATTEMPED_FOR = 1
+        """
+        r = self.dbc.execute_query(q)
+        if len(r) == 0:
+            return 'OK'
+        else:
+            if create_date(r[0][0]) < datetime.datetime.now():
+                return 'OK'
+            else:
+                return "ERROR"
+
     def parse(self, data_received: str, clients: set):
 
         info = data_received.split('//')
@@ -352,4 +366,6 @@ class Parser:
             return self.unblock(info[1:])
         elif info[0] == 'get-password':
             return self.get_password(info[1])
+        elif info[0] == 'check-penalty-pw':
+            return self.check_penalty_pw(info[1])
         return 'ERROR'
