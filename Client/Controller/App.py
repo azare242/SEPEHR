@@ -231,26 +231,44 @@ class App:
             elif i == '3':
                 return
 
-    def forgot_password(self):
-        uin = input('Enter Username<back> for back: ')
-        if uin == '<back>':
-            return
-        if not self.check_penalty_fp(uin):
-            print('You have been restricted for recovery with username , if you want recovery with email or phone '
-                  'number enter 1 else enter 0')
-            while True:
-                i = input()
-                if i == '1':
-                    self.forgot_password_ep()
-                    return
-                elif i == '0':
-                    return
+    def fp_menu(self):
+        print('Recovery with: 1-username and security question\n2-email\n3-phone number\n4-exit')
+        while True:
+            i = input()
+            if i == '1':
+                return 'u'
+            elif i == '2':
+                return 'e'
+            elif i == '3':
+                return 'p'
 
-        c = self.security_question_check(uin)
-        if c == '<back>':
-            return
-        if c:
-            self.change_password(uin)
+    def forgot_password(self):
+        op = self.fp_menu()
+        if op == 'u':
+            uin = input('Enter Username<back> for back: ')
+            if uin == '<back>':
+                return
+            if not self.check_penalty_fp(uin):
+                print('You have been restricted for recovery with username , if you want recovery with email or phone '
+                      'number enter 1 else enter 0')
+                while True:
+                    i = input()
+                    if i == '1':
+                        self.forgot_password_ep()
+                        return
+                    elif i == '0':
+                        return
+
+            c = self.security_question_check(uin)
+            if c == '<back>':
+                return
+            if c:
+                self.change_password(uin)
+
+        elif op == 'e':
+            self.forgot_password_e()
+        elif op == 'p':
+            self.forgot_password_ph()
 
     def run(self):
         self.connection.connect()
