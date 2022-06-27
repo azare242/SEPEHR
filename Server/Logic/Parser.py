@@ -2,6 +2,7 @@ from Server.Logic.DatabaseConnection import *
 import datetime
 from Utils.datetimes import *
 
+
 class Parser:
     def __init__(self, database_connection: DatabaseConnection):
         self.dbc = database_connection
@@ -309,6 +310,37 @@ class Parser:
             else:
                 return "ERROR"
 
+    def check_penalty_fp(self, username):
+        q = f"""
+        SELECT count(*) FROM sepehr.penalties WHERE USER_ID = '{username}' AND ATTEMPED_FOR = 2
+        """
+        r = self.dbc.execute_query(q)
+        if r[0][0] != 0:
+            return 'OK'
+        else:
+            return 'ERROR'
+
+    def forgot_password_email(self, email):
+        q = f"""
+        SELECT count(*) FROM sepehr.users WHERE EMAIL = '{email}'
+        """
+        r = self.dbc.execute_query(q)
+        r = self.dbc.execute_query(q)
+        if r[0][0] == 1:
+            return r[0][1]
+        else:
+            return "ERROR"
+
+    def forgot_password_phone_number(self, phone_number):
+        q = f"""
+        SELECT count(*),ID FROM sepehr.users WHERE PHONE_NUMBER = '{phone_number}'
+        """
+        r = self.dbc.execute_query(q)
+        if r[0][0] == 1:
+            return r[0][1]
+        else:
+            return "ERROR"
+
     def parse(self, data_received: str, clients: set):
 
         info = data_received.split('//')
@@ -368,4 +400,10 @@ class Parser:
             return self.get_password(info[1])
         elif info[0] == 'check-penalty-pw':
             return self.check_penalty_pw(info[1])
+        elif info[0] == 'check-penalty-fp':
+            return self.check_penalty_fp(info[1])
+        elif info[0] == 'forgot-password-email':
+            pass
+        elif info[0] == 'forgot-password-phone_number':
+            pass
         return 'ERROR'

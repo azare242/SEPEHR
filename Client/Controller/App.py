@@ -180,10 +180,72 @@ class App:
         self.connection.send(data)
         response = self.connection.receive()
 
+    def check_penalty_fp(self, username):
+        data = f'check-penalty-fp//{username}'
+        self.connection.send(data)
+        r = self.connection.receive()
+        if r == "OK":
+            return True
+        else:
+            return False
+
+    def forgot_password_e(self):
+        email = get_email()
+        if email == '<back>':
+            return
+        else:
+            data = f'forgot-password-email/{email}'
+            self.connection.send(data)
+            r = self.connection.receive()
+            if r != "ERROR":
+                self.change_password(r)
+            else:
+                print("EMAIL INVALID")
+            return
+
+    def forgot_password_ph(self):
+        print('enter phone number or <back> for back:')
+        while True:
+            ph = input()
+            if ph == '<back>':
+                return
+            else:
+                data = f"forgot-password-phone_number//{ph}"
+                self.connection.send(data)
+                r = self.connection.receive()
+                if r != "ERROR":
+                    self.change_password(r)
+                else:
+                    print('PHONE NUMBER INVALID')
+                return
+
+    def forgot_password_ep(self):
+        while True:
+            i = input('1- email\n2-phone number\n3-exit')
+            if i == '1':
+                self.forgot_password_e()
+                return
+            elif i == '2':
+                self.forgot_password_ph()
+                return
+            elif i == '3':
+                return
+
     def forgot_password(self):
         uin = input('Enter Username<back> for back: ')
         if uin == '<back>':
             return
+        if not self.check_penalty_fp(uin):
+            print('You have been restricted for recovery with username , if you want recovery with email or phone '
+                  'number enter 1 else enter 0')
+            while True:
+                i = input()
+                if i == '1':
+                    self.forgot_password_ep()
+                    return
+                elif i == '0':
+                    return
+
         c = self.security_question_check(uin)
         if c == '<back>':
             return

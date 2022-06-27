@@ -13,7 +13,7 @@ class ClientHandler:
         self.server_clients = clients
         self.parser = Parser(database_connection)
 
-    #def client_connection_loop(self):
+    # def client_connection_loop(self):
 
     def handling(self):
         username = None
@@ -30,13 +30,13 @@ class ClientHandler:
                     username = data_received.split('//')[1]
 
         except socket.error as err:
-                print("USER DISCONNECTED")
-                if username is not None:
-                    self.server_clients.remove(username)
-                self.client_socket.close()
-                return
+            print("USER DISCONNECTED")
+            if username is not None:
+                self.server_clients.remove(username)
+            self.client_socket.close()
+            return
         finally:
-            if flag == 1 :
+            if flag == 1:
                 if username is not None:
                     self.server_clients.remove(username)
                 print("USER EXITED")
