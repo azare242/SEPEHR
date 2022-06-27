@@ -100,12 +100,12 @@ class App:
 
             if pw == correct_password:
                 flag = 1
-                return True
+                return pw
             else:
                 i -= 1
                 print(f"PASSWORD INCORRECT you have {i} try")
 
-        return False
+        return "ERROR"
 
     def login_a(self):
         print('Notice: if you want to back enter "<back>"')
@@ -114,6 +114,7 @@ class App:
             un = input('Username : ').lower()
             if un == '<back>':
                 return
+            # TODO : CHECK PENALTY
             data = f'get-password//{un}'
 
             self.connection.send(data)
@@ -122,8 +123,8 @@ class App:
                 pw = self.check_password(r)
                 if pw == '<back>':
                     return
-                if pw :
-                    data = f'login//{un}//{encrypt(pw)}'
+                if pw != 'ERROR':
+                    data = f'login//{un}//{pw}'
                     self.connection.send(data)
                     response = self.connection.receive()
                     if response == "DONE":
