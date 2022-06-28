@@ -301,8 +301,9 @@ class Parser:
 
     def get_password(self, username):
         q = f"""
-        SELECT ENCRYPTED_PASSWORD FROM sepehr.passwords
+        SELECT ENCRYPTED_PASSWORD,USER_ID FROM sepehr.passwords
         WHERE USER_ID = '{username}' 
+        WHERE USER_ID NOT IN (SELECT ID FROM sepehr.users WHERE deleted = 1)
         """
         r = self.dbc.execute_query(q)
         if len(r) == 0:

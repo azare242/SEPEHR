@@ -155,7 +155,7 @@ class App:
                         UserApplication(un, self.connection).main_loop()
                         return
                     else:
-                        print('user logged in before')
+                        print('cant log in')
                         return
                 else:
                     print('you have been restricted for 1 days')
