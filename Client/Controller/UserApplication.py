@@ -163,11 +163,22 @@ class UserApplication:
         if cs[1] == 'block':
             self.friends = get_friends_list(self.username, self.connection)
 
+    def delete_account(self):
+        i = input('do you sure? 1 for yes anything for no :,( :')
+        if i == '1':
+            data = f'delete-account//{self.username}'
+            self.connection.send(data)
+            self.connection.receive()
+            disconnect(self.connection)
+            return True
+        else:
+            return False
+
     def main_loop(self):
         while True:
             print(get_user_menu())
             c = input()
-            if self.check(c, [str(x) for x in range(0, 8)]):
+            if self.check(c, [str(x) for x in range(0, 9)]):
                 if c == '0':
                     disconnect(self.connection)
                     return
@@ -180,26 +191,17 @@ class UserApplication:
                 elif c == '4':
                     self.add_friend()
                 elif c == '5':
-                    pass
+                    self.remove_friend()
                 elif c == '6':
                     self.friend_requests()
                 elif c == '7':
                     self.block()
-                elif c == 8:
+                elif c == '8':
                     t = self.delete_account()
                     if t:
                         print('Good bye')
+                        disconnect(self.connection)
                         return
-
-    def delete_account(self):
-        if input('do you sure? 1 for yes anything for no :,( :') == '1':
-            data = f'delete-account//{self.username}'
-            self.connection.send(data)
-            self.connection.receive()
-            disconnect(self.connection)
-            return True
-        else:
-            return False
 
     def check_message_friend(self, username: str):
         for x in self.friends:

@@ -80,12 +80,18 @@ class Parser:
     def search(self, data):
         s_res = self.dbc.execute_query(f"""
         SELECT sepehr.users.ID from sepehr.users
-        WHERE sepehr.users.{data[0]} LIKE '%{data[1]}%'
+        WHERE sepehr.users.{data[0]} LIKE '%{data[1]}%' AND deleted = 0
         """)
         print('1')
         if len(s_res) == 0:
             return 'NOTHING'
         return self.create_string(s_res)
+
+    def deleted_users(self):
+        q = f"""
+        select sepehr.users.ID FROM sepehr.users WHERE  deleted = 1
+        """
+        return self.dbc.execute_query(q)
 
     def get_friends_list(self, username):
         friends = self.dbc.execute_query(f"""
@@ -97,6 +103,11 @@ class Parser:
         """)
         if len(friends) == 0:
             return "EMPTY"
+        l = self.deleted_users()
+        for x in friends:
+            for y in l:
+                if x[0] == y:
+                    x[0] = x[0] + ':DELETED:'
         return self.create_string(friends)
 
     def send_message(self, data):
@@ -365,12 +376,13 @@ class Parser:
         """
         self.dbc.execute_query(q, mode=1)
         return "OK"
+
     def penalty_sq(self, username):
         _time_ = datetime.datetime.max
         q = f"""
         INSERT INTO sepehr.penalties(USER_ID, ENDTIME, ATTEMPED_FOR) VALUE ('{username}', '{_time_}', 2)
         """
-        self.dbc.execute_query(q , mode=1)
+        self.dbc.execute_query(q, mode=1)
         return "OK"
 
     def parse(self, data_received: str, clients: set):

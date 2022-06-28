@@ -75,7 +75,6 @@ class App:
             pw = self.get_password()
             if pw == '<back>':
                 return
-            self.connection.connect()
             data = f'signup//{un}//{pw}//{fname}//{lname}//{phone_number}//{e}'
             self.connection.send(data)
             response = self.connection.receive()
