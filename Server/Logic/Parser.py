@@ -341,6 +341,38 @@ class Parser:
         else:
             return "ERROR"
 
+    def get_end_time_penalty(self, _datetime_):
+        day = int(_datetime_.day)
+        month = int(_datetime_.month)
+        year = int(_datetime_.year)
+        h, m, s = int(_datetime_.hour), int(_datetime_.minute), int(_datetime_.second)
+        if day == 30 or day == 31:
+            if month == 12:
+                year += 1
+                month = 0
+            day = 1
+            month += 1
+        else:
+            day += 1
+        res = datetime.datetime(year, month, day, h, m, s)
+        return res.strftime('%Y-%m-%d %H:%M:%S')
+
+    def penalty_password(self, username):
+        _time_ = self.get_end_time_penalty(datetime.datetime.now())
+        q = f"""
+        INSERT INTO sepehr.penalties(USER_ID, ENDTIME, ATTEMPED_FOR) VALUES 
+        ('{username}', '{_time_}', 1)
+        """
+        self.dbc.execute_query(q, mode=1)
+        return "OK"
+    def penalty_sq(self, username):
+        _time_ = datetime.datetime.max
+        q = f"""
+        INSERT INTO sepehr.penalties(USER_ID, ENDTIME, ATTEMPED_FOR) VALUE ('{username}', '{_time_}', 2)
+        """
+        self.dbc.execute_query(q , mode=1)
+        return "OK"
+
     def parse(self, data_received: str, clients: set):
 
         info = data_received.split('//')
@@ -406,4 +438,8 @@ class Parser:
             return self.forgot_password_email(info[1])
         elif info[0] == 'forgot-password-phone_number':
             return self.forgot_password_phone_number(info[1])
+        elif info[0] == 'penalty-password':
+            return self.penalty_password(info[1])
+        elif info[0] == 'penalty-sq':
+            pass
         return 'ERROR'

@@ -113,6 +113,11 @@ class App:
         r = self.connection.receive()
         return r == 'OK'
 
+    def penalty_password(self,username):
+        data = f'penalty-password//{username}'
+        self.connection.send(data)
+        r = self.connection.receive()
+
     def login_a(self):
         print('Notice: if you want to back enter "<back>"')
 
@@ -143,8 +148,9 @@ class App:
                         print('user logged in before')
                         return
                 else:
-                    pass
-                    # TODO : DO PENALTY
+                    print('you have been restricted for 1 days')
+                    self.penalty_password(un)
+                    return
             else:
                 print("username not found")
 
@@ -167,10 +173,16 @@ class App:
         data = f'security//{username}'
         self.connection.send(data)
         q, a = self.connection.receive().split('//')
-        ain = input(q + ' |||<back> for back')
-        if ain == '<back>':
-            return '<back>'
-        return ain == a
+        flag = 0
+        for _ in range(0, 5):
+            ai = input('enter your answer or <back> for back: ')
+            if ai == '<back>':
+                return '<back>'
+            if ai.lower() == a.lower():
+                flag = 1
+                return True
+
+        return flag == 1
 
     def change_password(self, username):
         pw = encrypt(input('new password <back> for back: '))
@@ -262,8 +274,12 @@ class App:
             c = self.security_question_check(uin)
             if c == '<back>':
                 return
-            if c:
+            elif c:
                 self.change_password(uin)
+            elif not c:
+                print("you have been restricted for recovery your password by security question , try it by phone "
+                      "number of email")
+                return
 
         elif op == 'e':
             self.forgot_password_e()
