@@ -337,9 +337,8 @@ class Parser:
 
     def forgot_password_email(self, email):
         q = f"""
-        SELECT count(*) FROM sepehr.users WHERE EMAIL = '{email}'
+        SELECT count(*),ID FROM sepehr.users WHERE EMAIL = '{email}'
         """
-        r = self.dbc.execute_query(q)
         r = self.dbc.execute_query(q)
         if r[0][0] == 1:
             return r[0][1]
