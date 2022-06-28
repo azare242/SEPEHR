@@ -43,6 +43,17 @@ class App:
         a = input('Answer: ')
         return q, a
 
+    def get_password(self):
+        print('enter password (at least one alphabet with numbers) or <back> to back:')
+        while True:
+            pw = input()
+            if pw == "<back>":
+                return '<back>'
+            r = re.search('[a-zA-Z]', pw)
+            if r:
+                return encrypt(pw)
+            else:
+                print('invalid')
     def signup_a(self):
         print('Notice: if you want to back enter "<back>"')
         while True:
@@ -61,8 +72,8 @@ class App:
             e = get_email()
             if e == '<back>':
                 return
-            pw = encrypt(input('Password : '))
-            if decrypt(pw) == '<back>':
+            pw = self.get_password()
+            if pw == '<back>':
                 return
             self.connection.connect()
             data = f'signup//{un}//{pw}//{fname}//{lname}//{phone_number}//{e}'
