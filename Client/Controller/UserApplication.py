@@ -203,10 +203,21 @@ class UserApplication:
                         disconnect(self.connection)
                         return
 
+    def check_deleted_friends(self, username):
+        for x in self.friends:
+            if x.__contains__('--!!'):
+                if x.__contains__(username):
+                    return False
+        return True
+
     def check_message_friend(self, username: str):
+        if not self.check_deleted_friends(username):
+            return False
+
         for x in self.friends:
             if username.__eq__(x):
                 return True
+
         return False
 
     def check_message(self, data: str):

@@ -74,7 +74,7 @@ class Parser:
             return "EMPTY"
         temp = []
         for x in data:
-            temp.append(x[0])
+            temp.append(x)
         return '//'.join(temp)
 
     def search(self, data):
@@ -104,11 +104,16 @@ class Parser:
         if len(friends) == 0:
             return "EMPTY"
         l = self.deleted_users()
+        res = []
         for x in friends:
             for y in l:
-                if x[0] == y:
-                    x[0] = x[0] + ':DELETED:'
-        return self.create_string(friends)
+                if x[0] == y[0]:
+                    temp = x[0] + '--!!'
+                    res.append(temp)
+                else:
+                    res.append(x[0])
+        print(res)
+        return self.create_string(res)
 
     def send_message(self, data):
         _time_ = _time_ = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
