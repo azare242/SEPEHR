@@ -147,19 +147,21 @@ class Parser:
 
     def get_messages(self, data):
         q1 = f"""
-        SELECT TEXT,USER_ID_SENDER,MESSAGE_ID
+        (SELECT TEXT,USER_ID_SENDER,MESSAGE_ID
         FROM sepehr.messages AS M , sepehr.sender_reciver_messages AS SRM
         WHERE M.ID = SRM.MESSAGE_ID 
         AND USER_ID_SENDER = '{data[0]}' AND USER_ID_RECIVER = '{data[1]}'
-        ORDER BY ASC sentTIME
+        ORDER BY sentTIME)
         UNION 
-        SELECT TEXT,USER_ID_SENDER,MESSAGE_ID
+        (SELECT TEXT,USER_ID_SENDER,MESSAGE_ID
         FROM sepehr.messages AS M , sepehr.sender_reciver_messages AS SRM
         WHERE M.ID = SRM.MESSAGE_ID 
         AND USER_ID_SENDER = '{data[1]}' AND USER_ID_RECIVER = '{data[0]}'
-        ORDER BY ASC sentTIME
+        ORDER BY sentTIME)
         """
         messages = self.dbc.execute_query(q1)
+        if len(messages) == 0:
+            return "EMPTY"
         return self.create_messages_string(messages)
 
     def check_username(self, username):
@@ -178,7 +180,7 @@ class Parser:
 
     def add_friend(self, data):
         if self.check_username(data[1]):
-            if self.is_blocked(data[0], data[1]):
+            if self.is_blocked(data[0], data[1]) :
                 return "ERROR"
             elif self.is_blocked(data[1], data[0]):
                 self.unblock([data[1], data[0]])
