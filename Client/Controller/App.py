@@ -277,6 +277,7 @@ class App:
             elif c:
                 self.change_password(uin)
             elif not c:
+                data = f'penalty-sq//{uin}'
                 print("you have been restricted for recovery your password by security question , try it by phone "
                       "number of email")
                 return

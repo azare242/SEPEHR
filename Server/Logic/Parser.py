@@ -441,5 +441,5 @@ class Parser:
         elif info[0] == 'penalty-password':
             return self.penalty_password(info[1])
         elif info[0] == 'penalty-sq':
-            pass
+            return self.penalty_sq(info[1])
         return 'ERROR'
