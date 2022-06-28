@@ -85,7 +85,11 @@ class Parser:
 
         if len(s_res) == 0:
             return 'NOTHING'
-        return self.create_string(s_res)
+        l = []
+        for x in s_res:
+            l.append(x[0])
+
+        return '//'.join(l)
 
     def deleted_users(self):
         q = f"""
