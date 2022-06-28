@@ -257,9 +257,11 @@ class Parser:
         WHERE USER_ID = '{username}'
         """
         r = self.dbc.execute_query(q)
+
         if len(q) == 0:
             return "ERROR"
-        return self.create_string(r)
+        temp = str(r[0][0]) + "//" + str(r[0][1])
+        return temp
 
     def change_password(self, data):
         q = f"""
@@ -301,9 +303,8 @@ class Parser:
 
     def get_password(self, username):
         q = f"""
-        SELECT ENCRYPTED_PASSWORD,USER_ID FROM sepehr.passwords
-        WHERE USER_ID = '{username}' 
-        WHERE USER_ID NOT IN (SELECT ID FROM sepehr.users WHERE deleted = 1)
+        SELECT p.ENCRYPTED_PASSWORD,p.USER_ID FROM sepehr.passwords AS p
+        WHERE p.USER_ID = '{username}' AND NOT EXISTS (SELECT u.ID FROM sepehr.users AS u WHERE u.ID = p.USER_ID AND deleted = 1)
         """
         r = self.dbc.execute_query(q)
         if len(r) == 0:
@@ -329,7 +330,7 @@ class Parser:
         SELECT count(*) FROM sepehr.penalties WHERE USER_ID = '{username}' AND ATTEMPED_FOR = 2
         """
         r = self.dbc.execute_query(q)
-        if r[0][0] != 0:
+        if r[0][0] == 0:
             return 'OK'
         else:
             return 'ERROR'
