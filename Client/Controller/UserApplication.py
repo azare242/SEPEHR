@@ -233,7 +233,6 @@ class UserApplication:
         if m == '<back>':
             return
         ms = m.split('->')
-        print(ms)
         if not self.check_message(m):
             print('invalid')
             return

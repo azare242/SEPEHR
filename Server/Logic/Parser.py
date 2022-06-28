@@ -82,7 +82,7 @@ class Parser:
         SELECT sepehr.users.ID from sepehr.users
         WHERE sepehr.users.{data[0]} LIKE '%{data[1]}%' AND deleted = 0
         """)
-        print('1')
+
         if len(s_res) == 0:
             return 'NOTHING'
         return self.create_string(s_res)
@@ -112,13 +112,12 @@ class Parser:
                     res.append(temp)
                 else:
                     res.append(x[0])
-        print(res)
+
         return self.create_string(res)
 
     def send_message(self, data):
         _time_ = _time_ = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         message_id = f'{data[1]}X{data[2]}X{_time_}'
-        print(message_id)
         q1 = f"""
         INSERT INTO sepehr.messages(ID, TEXT, sentTIME) VALUE 
         ('{message_id}', '{data[0]}','{_time_}')
@@ -144,7 +143,6 @@ class Parser:
             s = x[1]
             id = x[2]
             res = res + f'{id}//{txt}//{s}***'
-        print(res)
         return res
 
     def get_messages(self, data):
@@ -202,18 +200,17 @@ class Parser:
         return res
 
     def accept_request(self, data):
-        print(data)
         q1 = f"""
         UPDATE sepehr.pending_friend_requests
         SET IS_ACCEPTED = 1
         WHERE USER_ID_RECIVER = '{data[0]}' AND USER_ID_SENDER = '{data[1]}' AND IS_ACCEPTED = 0
         """
-        print(self.dbc.execute_query(q1, mode=1))
+        self.dbc.execute_query(q1, mode=1)
         q2 = f"""
         INSERT INTO sepehr.friends(USER_ID1, USER_ID2) VALUE 
         ('{data[1]}','{data[0]}')
         """
-        print(self.dbc.execute_query(q2, mode=1))
+        self.dbc.execute_query(q2, mode=1)
         return "OK"
 
     def reject_request(self, data):
@@ -222,7 +219,7 @@ class Parser:
                 SET IS_ACCEPTED = -1
                 WHERE USER_ID_RECIVER = '{data[0]}' AND USER_ID_SENDER = '{data[1]}'
                 """
-        print(self.dbc.execute_query(q1, mode=1))
+        self.dbc.execute_query(q1, mode=1)
         return "OK"
 
     def remove_friend(self, data):
